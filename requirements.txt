@@ -1,0 +1,10 @@
+flask
+pandas # Manipulation et analyse de données
+numpy # Calcul numérique & tableaux
+scikit-learn # Machine Learning
+openpyxl # Lecture / écriture de fichiers Excel (.xlsx)
+lxml # Traitement de XML et HTML
+werkzeug  # securise et normalise les fichiers
+mysql-connector-python
+
+

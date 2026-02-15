@@ -1,0 +1,544 @@
+{% extends "base.html" %}
+
+{% block title %}Upload & Traitement{% endblock %}
+
+{% block content %}
+
+<style>
+    .upload-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .page-header {
+        text-align: center;
+        margin-bottom: 2.5rem;
+    }
+
+    .page-header h1 {
+        font-size: 2rem;
+        font-weight: 700;
+        color: #1F2937;
+        margin-bottom: 0.5rem;
+    }
+
+    .page-header p {
+        color: #6B7280;
+        font-size: 1rem;
+    }
+
+    .upload-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .upload-zone {
+        border: 2px dashed #D1D5DB;
+        border-radius: 0.75rem;
+        padding: 3rem 2rem;
+        text-align: center;
+        background: #F9FAFB;
+        transition: all 0.3s;
+        cursor: pointer;
+    }
+
+    .upload-zone:hover {
+        border-color: #4F46E5;
+        background: #EEF2FF;
+    }
+
+    .upload-zone.dragover {
+        border-color: #4F46E5;
+        background: #EEF2FF;
+        transform: scale(1.02);
+    }
+
+    .upload-icon {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 1.5rem;
+        background: #EEF2FF;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #4F46E5;
+        font-size: 2.5rem;
+    }
+
+    .upload-text {
+        font-size: 1.1rem;
+        color: #1F2937;
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .upload-subtext {
+        color: #6B7280;
+        font-size: 0.9rem;
+    }
+
+    .file-input {
+        display: none;
+    }
+
+    .file-info {
+        background: #F3F4F6;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-top: 1rem;
+    }
+
+    .file-details {
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+
+    .file-icon {
+        width: 45px;
+        height: 45px;
+        background: #4F46E5;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: white;
+        font-size: 1.25rem;
+    }
+
+    .file-name {
+        font-weight: 600;
+        color: #1F2937;
+        margin-bottom: 0.25rem;
+    }
+
+    .file-size {
+        font-size: 0.85rem;
+        color: #6B7280;
+    }
+
+    .remove-file {
+        background: none;
+        border: none;
+        color: #EF4444;
+        cursor: pointer;
+        font-size: 1.25rem;
+        padding: 0.5rem;
+        transition: all 0.2s;
+    }
+
+    .remove-file:hover {
+        color: #DC2626;
+        transform: scale(1.1);
+    }
+
+    .format-info {
+        background: #EEF2FF;
+        border-radius: 0.5rem;
+        padding: 1rem;
+        margin-top: 1rem;
+    }
+
+    .format-info strong {
+        color: #4F46E5;
+    }
+
+    .format-badges {
+        display: flex;
+        gap: 0.5rem;
+        flex-wrap: wrap;
+        margin-top: 0.5rem;
+    }
+
+    .format-badge {
+        background: white;
+        padding: 0.35rem 0.75rem;
+        border-radius: 0.375rem;
+        font-size: 0.85rem;
+        color: #4B5563;
+        font-weight: 500;
+    }
+
+    .options-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        margin-bottom: 1.5rem;
+    }
+
+    .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #1F2937;
+        margin-bottom: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .option-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #F3F4F6;
+    }
+
+    .option-item:last-child {
+        border-bottom: none;
+    }
+
+    .option-label {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+
+    .option-icon {
+        width: 35px;
+        height: 35px;
+        background: #F3F4F6;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #6B7280;
+    }
+
+    .option-text strong {
+        color: #1F2937;
+        display: block;
+        margin-bottom: 0.125rem;
+    }
+
+    .option-text small {
+        color: #6B7280;
+        font-size: 0.85rem;
+    }
+
+    .form-check-input:checked {
+        background-color: #4F46E5;
+        border-color: #4F46E5;
+    }
+
+    .btn-process {
+        background: #4F46E5;
+        color: white;
+        padding: 0.875rem 2rem;
+        border: none;
+        border-radius: 0.5rem;
+        font-weight: 600;
+        font-size: 1rem;
+        width: 100%;
+        transition: all 0.3s;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .btn-process:hover:not(:disabled) {
+        background: #4338CA;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(79, 70, 229, 0.4);
+    }
+
+    .btn-process:disabled {
+        background: #D1D5DB;
+        cursor: not-allowed;
+    }
+
+    .progress-section {
+        display: none;
+        background: white;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        text-align: center;
+    }
+
+    .spinner {
+        width: 50px;
+        height: 50px;
+        border: 4px solid #F3F4F6;
+        border-top: 4px solid #4F46E5;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 0 auto 1rem;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+</style>
+
+<div class="upload-container">
+    <!-- En-tête -->
+    <div class="page-header">
+        <h1>Upload & Traitement de Données</h1>
+        <p>Importez votre fichier pour démarrer le processus de nettoyage automatisé</p>
+    </div>
+
+    <!-- Zone d'upload -->
+    <div class="upload-card">
+        <form id="uploadForm" enctype="multipart/form-data">
+            <div class="upload-zone" id="uploadZone">
+                <div class="upload-icon">
+                    <i class="bi bi-cloud-upload"></i>
+                </div>
+                <div class="upload-text">Glissez-déposez votre fichier ici</div>
+                <div class="upload-subtext">ou cliquez pour parcourir vos fichiers</div>
+                <input type="file" id="fileInput" name="file" class="file-input" accept=".csv,.xlsx,.xls,.json,.xml">
+            </div>
+
+            <!-- Info fichier sélectionné -->
+            <div id="fileInfo" style="display: none;">
+                <div class="file-info">
+                    <div class="file-details">
+                        <div class="file-icon">
+                            <i class="bi bi-file-earmark-text"></i>
+                        </div>
+                        <div>
+                            <div class="file-name" id="fileName">document.csv</div>
+                            <div class="file-size" id="fileSize">2.5 MB</div>
+                        </div>
+                    </div>
+                    <button type="button" class="remove-file" id="removeFile">
+                        <i class="bi bi-x-circle"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Info formats -->
+            <div class="format-info">
+                <strong>Formats acceptés :</strong>
+                <div class="format-badges">
+                    <span class="format-badge"><i class="bi bi-filetype-csv"></i> CSV</span>
+                    <span class="format-badge"><i class="bi bi-file-earmark-excel"></i> Excel</span>
+                    <span class="format-badge"><i class="bi bi-filetype-json"></i> JSON</span>
+                    <span class="format-badge"><i class="bi bi-filetype-xml"></i> XML</span>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <!-- Options de traitement -->
+    <div class="options-card">
+        <div class="section-title">
+            <i class="bi bi-sliders"></i>
+            Options de traitement
+        </div>
+
+        <div class="option-item">
+            <div class="option-label">
+                <div class="option-icon">
+                    <i class="bi bi-exclamation-triangle"></i>
+                </div>
+                <div class="option-text">
+                    <strong>Traiter les valeurs manquantes</strong>
+                    <small>Détection et imputation automatique</small>
+                </div>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="missingValues" checked>
+            </div>
+        </div>
+
+        <div class="option-item">
+            <div class="option-label">
+                <div class="option-icon">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <div class="option-text">
+                    <strong>Détecter les valeurs aberrantes</strong>
+                    <small>Identification et correction des outliers</small>
+                </div>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="outliers" checked>
+            </div>
+        </div>
+
+        <div class="option-item">
+            <div class="option-label">
+                <div class="option-icon">
+                    <i class="bi bi-files"></i>
+                </div>
+                <div class="option-text">
+                    <strong>Supprimer les doublons</strong>
+                    <small>Élimination des lignes dupliquées</small>
+                </div>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="duplicates" checked>
+            </div>
+        </div>
+
+        <div class="option-item">
+            <div class="option-label">
+                <div class="option-icon">
+                    <i class="bi bi-diagram-3"></i>
+                </div>
+                <div class="option-text">
+                    <strong>Normaliser les données</strong>
+                    <small>Standardisation des valeurs numériques</small>
+                </div>
+            </div>
+            <div class="form-check form-switch">
+                <input class="form-check-input" type="checkbox" id="normalize" checked>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bouton de traitement -->
+    <button type="button" class="btn-process" id="processBtn" disabled>
+        <i class="bi bi-play-circle"></i>
+        Lancer le traitement
+    </button>
+
+    <!-- Section progression -->
+    <div class="progress-section" id="progressSection">
+        <div class="spinner"></div>
+        <h5>Traitement en cours...</h5>
+        <p class="text-muted">Veuillez patienter pendant que nous nettoyons vos données</p>
+    </div>
+</div>
+
+<script>
+    const uploadZone = document.getElementById('uploadZone');
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('fileInfo');
+    const fileName = document.getElementById('fileName');
+    const fileSize = document.getElementById('fileSize');
+    const removeFile = document.getElementById('removeFile');
+    const processBtn = document.getElementById('processBtn');
+    const progressSection = document.getElementById('progressSection');
+
+    /* ==========================
+       UPLOAD ZONE CLICK
+    ========================== */
+    uploadZone.addEventListener('click', () => {
+        fileInput.click();
+    });
+
+    /* ==========================
+       DRAG & DROP (ROBUSTE)
+    ========================== */
+    ['dragenter', 'dragover'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadZone.classList.add('dragover');
+        });
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+        uploadZone.addEventListener(eventName, (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            uploadZone.classList.remove('dragover');
+        });
+    });
+
+    uploadZone.addEventListener('drop', (e) => {
+        const files = e.dataTransfer.files;
+        if (files.length > 0) {
+            setFile(files[0]);
+        }
+    });
+
+    /* ==========================
+       FILE INPUT CHANGE
+    ========================== */
+    fileInput.addEventListener('change', (e) => {
+        if (e.target.files.length > 0) {
+            setFile(e.target.files[0]);
+        }
+    });
+
+    /* ==========================
+       SET FILE (SOURCE UNIQUE)
+    ========================== */
+    function setFile(file) {
+        // Synchroniser le fichier avec l'input
+        const dataTransfer = new DataTransfer();
+        dataTransfer.items.add(file);
+        fileInput.files = dataTransfer.files;
+
+        fileName.textContent = file.name;
+        fileSize.textContent = formatFileSize(file.size);
+
+        uploadZone.style.display = 'none';
+        fileInfo.style.display = 'block';
+        processBtn.disabled = false;
+    }
+
+    /* ==========================
+       REMOVE FILE
+    ========================== */
+    removeFile.addEventListener('click', () => {
+        fileInput.value = '';
+        uploadZone.style.display = 'block';
+        fileInfo.style.display = 'none';
+        processBtn.disabled = true;
+    });
+
+    /* ==========================
+       FILE SIZE FORMAT
+    ========================== */
+    function formatFileSize(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+
+    /* ==========================
+       PROCESS FILE
+    ========================== */
+    processBtn.addEventListener('click', async () => {
+        if (!fileInput.files.length) return;
+
+        const formData = new FormData();
+        formData.append('file', fileInput.files[0]);
+        formData.append('missing_values', document.getElementById('missingValues').checked);
+        formData.append('outliers', document.getElementById('outliers').checked);
+        formData.append('duplicates', document.getElementById('duplicates').checked);
+        formData.append('normalize', document.getElementById('normalize').checked);
+
+        processBtn.style.display = 'none';
+        progressSection.style.display = 'block';
+
+        try {
+            const response = await fetch('/process', {
+                method: 'POST',
+                body: formData
+            });
+
+            if (!response.ok) {
+                throw new Error('Erreur serveur');
+            }
+
+            const result = await response.json();
+            window.location.href = '/dashboard?file=' + encodeURIComponent(result.filename);
+
+        } catch (error) {
+            console.error(error);
+            alert('Erreur lors du traitement du fichier');
+            processBtn.style.display = 'flex';
+            progressSection.style.display = 'none';
+        }
+    });
+</script>
+
+{% endblock %}

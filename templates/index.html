@@ -1,0 +1,291 @@
+{% extends "base.html" %}
+
+{% block title %}API Data Processing{% endblock %}
+
+{% block content %}
+
+<style>
+    .intro-section {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        border-left: 4px solid #4F46E5;
+    }
+
+    .section-card {
+        background: white;
+        border-radius: 0.75rem;
+        padding: 1.75rem;
+        margin-bottom: 1.5rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+        transition: all 0.2s;
+    }
+
+    .section-card:hover {
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: #1F2937;
+        margin-bottom: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .format-badge {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: #F3F4F6;
+        border-radius: 0.5rem;
+        font-weight: 500;
+        color: #4B5563;
+        margin-right: 0.5rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .process-item {
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #E5E7EB;
+        display: flex;
+        align-items: start;
+        gap: 0.75rem;
+    }
+
+    .process-item:last-child {
+        border-bottom: none;
+    }
+
+    .process-number {
+        background: #4F46E5;
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.875rem;
+        font-weight: 600;
+        flex-shrink: 0;
+    }
+
+    .tech-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem;
+        background: #F9FAFB;
+        border-radius: 0.5rem;
+        margin-bottom: 0.75rem;
+    }
+
+    .tech-icon {
+        width: 40px;
+        height: 40px;
+        background: #4F46E5;
+        color: white;
+        border-radius: 0.5rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+    }
+
+    .btn-primary-custom {
+        background: #4F46E5;
+        color: white;
+        padding: 0.75rem 1.5rem;
+        border-radius: 0.5rem;
+        border: none;
+        font-weight: 500;
+        transition: all 0.2s;
+    }
+
+    .btn-primary-custom:hover {
+        background: #4338CA;
+    }
+</style>
+
+<!-- Section Introduction -->
+<div class="intro-section">
+    <h1 class="fw-bold mb-3">API d'Automatisation du Data Processing</h1>
+    <p class="text-muted mb-0">
+        Interface web pour l'automatisation du nettoyage et de la normalisation des données.
+        Cette API traite automatiquement vos fichiers de données en appliquant les meilleures
+        pratiques de data processing.
+    </p>
+</div>
+
+<!-- Contexte et Objectifs -->
+<div class="row mb-4">
+    <div class="col-md-6">
+        <div class="section-card">
+            <div class="section-title">
+                <i class="bi bi-info-circle"></i>
+                Contexte
+            </div>
+            <p class="text-muted mb-0">
+                Dans le cadre du traitement de données, cette API automatise le processus
+                de Data Processing, permettant un gain de temps considérable et une
+                standardisation des procédures de nettoyage.
+            </p>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="section-card">
+            <div class="section-title">
+                <i class="bi bi-bullseye"></i>
+                Objectif
+            </div>
+            <p class="text-muted mb-0">
+                Automatiser la phase de Data Processing (nettoyage des données) en utilisant
+                Python et ses technologies pour traiter efficacement différents formats de fichiers.
+            </p>
+        </div>
+    </div>
+</div>
+
+<!-- Formats supportés -->
+<div class="section-card">
+    <div class="section-title">
+        <i class="bi bi-file-earmark-text"></i>
+        Formats de fichiers pris en charge
+    </div>
+    <div>
+        <span class="format-badge"><i class="bi bi-filetype-csv"></i> CSV</span>
+        <span class="format-badge"><i class="bi bi-file-earmark-excel"></i> Excel (.xls, .xlsx)</span>
+        <span class="format-badge"><i class="bi bi-filetype-json"></i> JSON</span>
+        <span class="format-badge"><i class="bi bi-filetype-xml"></i> XML</span>
+    </div>
+</div>
+
+<!-- Traitements automatisés -->
+<div class="section-card">
+    <div class="section-title">
+        <i class="bi bi-gear"></i>
+        Traitements automatisés
+    </div>
+
+    <div class="process-item">
+        <div class="process-number">1</div>
+        <div>
+            <strong>Valeurs manquantes</strong>
+            <p class="text-muted mb-0 small">Détection et traitement automatique des données manquantes</p>
+        </div>
+    </div>
+
+    <div class="process-item">
+        <div class="process-number">2</div>
+        <div>
+            <strong>Valeurs aberrantes</strong>
+            <p class="text-muted mb-0 small">Identification et correction des outliers</p>
+        </div>
+    </div>
+
+    <div class="process-item">
+        <div class="process-number">3</div>
+        <div>
+            <strong>Valeurs dupliquées</strong>
+            <p class="text-muted mb-0 small">Détection et suppression des doublons</p>
+        </div>
+    </div>
+
+    <div class="process-item">
+        <div class="process-number">4</div>
+        <div>
+            <strong>Normalisation</strong>
+            <p class="text-muted mb-0 small">Standardisation des données numériques</p>
+        </div>
+    </div>
+</div>
+
+<!-- Technologies utilisées -->
+<!-- <div class="row">
+    <div class="col-md-6">
+        <div class="section-card">
+            <div class="section-title">
+                <i class="bi bi-code-square"></i>
+                Technologies Backend
+            </div>
+
+            <div class="tech-item">
+                <div class="tech-icon">
+                    <i class="bi bi-server"></i>
+                </div>
+                <div>
+                    <strong>Flask</strong>
+                    <p class="text-muted mb-0 small">Serveur web et API REST</p>
+                </div>
+            </div>
+
+            <div class="tech-item">
+                <div class="tech-icon">
+                    <i class="bi bi-file-earmark-code"></i>
+                </div>
+                <div>
+                    <strong>Python</strong>
+                    <p class="text-muted mb-0 small">Pandas, NumPy pour le traitement</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-6">
+        <div class="section-card">
+            <div class="section-title">
+                <i class="bi bi-palette"></i>
+                Technologies Frontend
+            </div>
+
+            <div class="tech-item">
+                <div class="tech-icon">
+                    <i class="bi bi-window"></i>
+                </div>
+                <div>
+                    <strong>HTML / CSS / JavaScript</strong>
+                    <p class="text-muted mb-0 small">Interface utilisateur</p>
+                </div>
+            </div>
+
+            <div class="tech-item">
+                <div class="tech-icon">
+                    <i class="bi bi-bootstrap"></i>
+                </div>
+                <div>
+                    <strong>Bootstrap</strong>
+                    <p class="text-muted mb-0 small">Framework CSS responsive</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div> -->
+
+<!-- Résultats -->
+<div class="section-card mt-3">
+    <div class="section-title">
+        <i class="bi bi-download"></i>
+        Résultats générés
+    </div>
+    <ul class="mb-3">
+        <li>Fichier nettoyé et normalisé (même format que l'entrée)</li>
+        <li>Rapport de traitement avec statistiques détaillées</li>
+        <li>Dashboard de visualisation des transformations</li>
+        <li>Comparaison avant/après traitement</li>
+    </ul>
+</div>
+
+<!-- Call to action -->
+<div class="text-center mt-4">
+    <button class="btn-primary-custom" onclick="window.location.href='/upload'">
+        <i class="bi bi-cloud-upload me-2"></i>
+        Commencer le traitement
+    </button>
+</div>
+
+{% endblock %}
