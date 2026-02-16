@@ -96,8 +96,41 @@ def process_file():
             'treatments_applied': []
         }
 
+        # 1. Doublons (si coché)
+        if options['duplicates']:
+            df, duplicate_stats = duplicated_rows(df)
+            processing_stats['treatments_applied'].append({
+                'treatment': 'Doublons',
+                'enabled': True,
+                'stats': duplicate_stats
+            })
+            # enregistrer dans la BDD
+            save_to_db('log', {
+                'file_id': file_id,
+                'treatment': 'Doublons',
+                'enabled': True,
+                'success': True,
+                'stats': duplicate_stats
+            })
 
-        # 1. Valeurs manquantes (si coché)
+        # 2. Outliers (si coché)
+        if options['outliers']:
+            df, outlier_stats = handle_outliers(df)
+            processing_stats['treatments_applied'].append({
+                'treatment': 'Valeurs aberrantes',
+                'enabled': True,
+                'stats': outlier_stats
+            })
+            # enregistrer dans la BDD
+            save_to_db('log', {
+                'file_id': file_id,
+                'treatment': 'Valeurs aberrantes',
+                'enabled': True,
+                'success': True,
+                'stats': outlier_stats
+            })
+
+        # 3. Valeurs manquantes (si coché)
         if options['missing_values']:
             df, missing_stats = missing_values(df)
             processing_stats['treatments_applied'].append({
@@ -112,40 +145,6 @@ def process_file():
                 'enabled': True,
                 'success': True,
                 'stats': missing_stats
-            })
-
-        # 2. Outliers (si coché)
-        if options['outliers']:
-            df, outlier_stats = handle_outliers(df)
-            processing_stats['treatments_applied'].append({
-                'treatment': 'Valeurs aberrantes',
-                'enabled': True,
-                'stats': outlier_stats
-            })
-            #enregistrer dans la BDD
-            save_to_db('log', {
-                'file_id': file_id,
-                'treatment': 'Valeurs aberrantes',
-                'enabled': True,
-                'success': True,
-                'stats': outlier_stats
-            })
-
-        # 3. Doublons (si coché)
-        if options['duplicates']:
-            df, duplicate_stats = duplicated_rows(df)
-            processing_stats['treatments_applied'].append({
-                'treatment': 'Doublons',
-                'enabled': True,
-                'stats': duplicate_stats
-            })
-            #enregistrer dans la BDD
-            save_to_db('log', {
-                'file_id': file_id,
-                'treatment': 'Doublons',
-                'enabled': True,
-                'success': True,
-                'stats': duplicate_stats
             })
 
         # 4. Normalisation (si coché)

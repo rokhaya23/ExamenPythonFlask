@@ -32,6 +32,16 @@ def handle_outliers(df,threshold_iqr=1.5):
     }
 
     for col in numeric_cols:
+        col_lower = col.lower()
+
+        if 'id' in col_lower:
+            print(f"   🔑 '{col}' : Colonne ID ignorée")
+            stats['outliers_details'].append({
+                'column': col,
+                'n_outliers': 0,
+                'action': 'Ignorée (colonne ID)'
+            })
+            continue
 
         #calcul des quartiles
         Q1=df_cleaned[col].quantile(0.25)     # 25% des resultats sont en dessous

@@ -24,11 +24,29 @@ def normalize(df,exclude_col=None):
     #detecter les colonne id
     for col in numeric_cols:
         col_lower = col.lower()
-        is_id_name = 'id' in col_lower
+        is_id_name = col_lower == 'id' or '_id' in col_lower or col_lower.endswith('id')
         is_unique = df_normalized[col].nunique() == len(df_normalized)
 
         if (is_id_name or is_unique) and col not in exclude_cols:
             exclude_cols.append(col)
+
+        # NOUVELLE DÉTECTION : Colonnes avec nombres de 7+ chiffres
+        non_null_values = df_normalized[col].dropna()
+
+        if len(non_null_values) > 0:
+            sample_values = non_null_values.head(min(10, len(non_null_values)))
+
+            # Compter combien de chiffres ont les valeurs
+            has_long_numbers = []
+            for val in sample_values:
+                str_val = str(int(abs(val))) if val == int(val) else str(abs(val)).replace('.', '')
+                num_digits = len(str_val)
+                has_long_numbers.append(num_digits >= 7)
+
+            # Si plus de 50% des valeurs ont 7+ chiffres, exclure la colonne
+            if sum(has_long_numbers) / len(has_long_numbers) >= 0.5:
+                exclude_cols.append(col)
+                print(f"   📱 '{col}' : Nombres longs détectés → EXCLUE")
 
         # Colonnes à normaliser
     cols_to_normalize = [col for col in numeric_cols if col not in exclude_cols]
