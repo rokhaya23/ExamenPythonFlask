@@ -202,6 +202,33 @@ def missing_values(df,max_missing_pct_predictors=0.20):
             'imputation_details': imputation_details
         }
 
+        # Vérification finale : imputation des valeurs restantes
+        for col in df_cleaned.columns:
+            remaining_nan = df_cleaned[col].isnull().sum()
+
+            if remaining_nan > 0:
+                print(f"⚠️ '{col}' : {remaining_nan} valeurs manquantes → imputation finale")
+
+                if col in numeric_cols:
+                    median = df_cleaned[col].median()
+                    df_cleaned[col].fillna(median, inplace=True)
+                    imputation_details.append({
+                        'column': col,
+                        'methode': 'Median (fallback)',
+                        'type': 'Numerique',
+                        'action': 'Imputation finale par médiane'
+                    })
+                else:
+                    mode_value = df_cleaned[col].mode()
+                    if len(mode_value) > 0:
+                        df_cleaned[col].fillna(mode_value[0], inplace=True)
+                        imputation_details.append({
+                            'column': col,
+                            'methode': 'Mode (fallback)',
+                            'type': 'Categoriel',
+                            'action': 'Imputation finale par mode'
+                        })
+
         return df_cleaned, stats
 
 def impute_by_regression(df,target_col,max_missing_pct_predictors=0.20):
@@ -280,33 +307,47 @@ def impute_by_regression(df,target_col,max_missing_pct_predictors=0.20):
     #ÉTAPE 3: NORMALISATION
     # Important pour la régression si les échelles sont différentes
     scaler_X = StandardScaler()
-    scaler_y = StandardScaler()
+    #scaler_y = StandardScaler()
 
     # Normalisation des X
     X_train_scaled = scaler_X.fit_transform(X_train)
     X_predict_scaled = scaler_X.transform(X_predict)
 
     # Normalisation du y
-    y_train_scaled = scaler_y.fit_transform(y_train.values.reshape(-1, 1)).ravel()
+    y_train_original = y_train.values
+    #y_train_scaled = scaler_y.fit_transform(y_train.values.reshape(-1, 1)).ravel()
 
 
     #ÉTAPE 4: ENTRAÎNEMENT DU MODÈLE
     model = LinearRegression()
-    model.fit(X_train_scaled, y_train_scaled)
+    model.fit(X_train_scaled, y_train_original)
 
     # Score R² sur l'entraînement
-    r2_score = model.score(X_train_scaled, y_train_scaled)
+    r2_score = model.score(X_train_scaled, y_train_original)
     print(f"R² du modèle: {r2_score:.4f}")
 
     if r2_score < 0.1:
         print(f"⚠️ R² très faible ({r2_score:.4f}) - Les prédictions peuvent être imprécises")
 
     #ÉTAPE 5: PRÉDICTION
-    predictions_scaled = model.predict(X_predict_scaled)
+    predictions = model.predict(X_predict_scaled)
 
-    #ÉTAPE 6: DÉNORMALISATION
-    # Retour à l'échelle originale
-    predictions = scaler_y.inverse_transform(predictions_scaled.reshape(-1, 1)).ravel()
+    # ÉTAPE 6: VALIDATION ET CLIPPING
+    # Vérifier que les prédictions sont raisonnables
+    y_min = y_train.min()
+    y_max = y_train.max()
+
+    # Définir une plage sûre : [min - 20%, max + 20%]
+    range_margin = (y_max - y_min) * 0.2
+    safe_min = max(0, y_min - range_margin)  # Minimum à 0
+    safe_max = y_max + range_margin
+
+    # Clipper les valeurs hors limites
+    predictions_clipped = np.clip(predictions, safe_min, safe_max)
+
+    n_clipped = (predictions != predictions_clipped).sum()
+    if n_clipped > 0:
+        print(f"   ⚠️ {n_clipped} prédictions hors limites → clippées")
 
     print(f"\nPrédictions - Stats:")
     print(f"  Moyenne: {predictions.mean():.2f}")
@@ -314,7 +355,7 @@ def impute_by_regression(df,target_col,max_missing_pct_predictors=0.20):
     print(f"  Max: {predictions.max():.2f}")
 
     #ÉTAPE 7: REMPLACEMENT DANS LE DATAFRAME
-    df_regression.loc[predict_mask, target_col] = predictions
+    df_regression.loc[predict_mask, target_col] = predictions_clipped
 
     print(f"✅ Imputation par régression réussie pour '{target_col}'")
 

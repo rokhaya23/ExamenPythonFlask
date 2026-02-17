@@ -3,6 +3,14 @@ def duplicated_rows(df):
     initial_count=len(df)            # nombre d'enregistrement
     df_cleaned=df.drop_duplicates(keep='first')                #supression des doublons nouveau dataframe
     df_cleaned = df_cleaned.reset_index(drop=True)
+
+    #supprimer aussi les doublons sur ID
+    id_columns = [col for col in df_cleaned.columns if 'id' in col.lower()]
+
+    if id_columns:
+        for id_col in id_columns:
+            df_cleaned = df_cleaned.drop_duplicates(subset=[id_col], keep='first')
+            df_cleaned = df_cleaned.reset_index(drop=True)
     df_remove=initial_count - len(df_cleaned)              # nombre d'enregistrement supprimer
 
     stats={

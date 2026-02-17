@@ -18,6 +18,7 @@ def handle_outliers(df,threshold_iqr=1.5):
             'final_count': initial_count,
             'rows_removed': 0,
             'numeric_cols': [],
+            'outliers_details': []
         }
         return df_cleaned, stats
 
@@ -52,6 +53,21 @@ def handle_outliers(df,threshold_iqr=1.5):
         lower_bound = Q1 - (threshold_iqr * IQR)
         upper_bound = Q3 + (threshold_iqr * IQR)
 
+        # ✅ AJUSTEMENT avec minimum positif
+        col_data = df_cleaned[col].dropna()
+
+        if len(col_data) > 0:
+            positive_ratio = (col_data > 0).sum() / len(col_data)
+
+            # Si 95%+ des valeurs sont positives
+            if positive_ratio > 0.95 and lower_bound < 0:
+                positive_values = col_data[col_data > 0]
+
+                if len(positive_values) > 0:
+                    min_positive = positive_values.min()
+                    print(f"   📊 '{col}' : {positive_ratio * 100:.0f}% positifs")
+                    print(f"      Limite ajustée : {lower_bound:.2f} → {min_positive:.2f}")
+                    lower_bound = min_positive
         #True si outlier, False sinon, ignorer les valeurs NULL
         outliers_mask=(((df_cleaned[col] < lower_bound) | (df_cleaned[col] > upper_bound))& df_cleaned[col].notna())
 
@@ -80,12 +96,12 @@ def handle_outliers(df,threshold_iqr=1.5):
 
             stats['outliers_details'].append({
                 'column': col,
-                'n_outliers': n_outliers,
-                'percentage': pourcentage,
-                'lower_bound': round(lower_bound,2),
-                'upper_bound': round(upper_bound,2),
+                'n_outliers': int(n_outliers),
+                'percentage': float(pourcentage),
+                'lower_bound': float(lower_bound),
+                'upper_bound': float(upper_bound),
                 'action': 'Suppression',
-                'outlier_values': outlier_values.tolist()[:10]
+                'outlier_values': [float(x) for x in outlier_values.tolist()[:10]]
             })
         else:
             # Compter combien de outliers qui sont en dessous et au dessus des limites
@@ -102,14 +118,14 @@ def handle_outliers(df,threshold_iqr=1.5):
 
             stats['outliers_details'].append({
                 'column': col,
-                'n_outliers': n_outliers,
-                'percentage': pourcentage,
-                'lower_bound': lower_bound,
-                'upper_bound': upper_bound,
-                'n_capped_below': n_below,
-                'n_capped_above': n_above,
+                'n_outliers': int(n_outliers),
+                'percentage': float(pourcentage),
+                'lower_bound': float(lower_bound),
+                'upper_bound': float(upper_bound),
+                'n_capped_below': int(n_below),
+                'n_capped_above': int(n_above),
                 'action': 'Capping',
-                'outlier_values': outlier_values.tolist()[:10]
+                'outlier_values': [float(x) for x in outlier_values.tolist()[:10]]
             })
 
     # suppression des lignes

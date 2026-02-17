@@ -23,7 +23,7 @@ app = Flask(__name__)
 app.config['UPLOADED_FOLDER'] = 'uploads'
 app.config['OUTPUTS_FOLDER'] = 'outputs'
 app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024       # taille max 20MB
-app.config['ALLOWED_EXTENSIONS'] = {'xls','xlsx','csv','json','xml'}       # extension fichiers acceptés
+app.config['ALLOWED_EXTENSIONS'] = {'xlsx','csv','json','xml'}       # extension fichiers acceptés
 
 
 #---------------------------------------------------------------------------------------------

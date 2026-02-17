@@ -14,7 +14,7 @@ def load_file(filepath):
 
     if ext == 'csv':
         df = pd.read_csv(filepath)
-    elif ext in ['xlsx', 'xls']:
+    elif ext == 'xlsx':
         df = pd.read_excel(filepath)
     elif ext == 'json':
         df = pd.read_json(filepath)
@@ -169,7 +169,7 @@ def save_dataframe_to_file(df, filepath, original_ext):
 
     if original_ext == 'csv':
         df.to_csv(filepath, index=False)
-    elif original_ext in ['xlsx', 'xls']:
+    elif original_ext == 'xlsx':
         df.to_excel(filepath, index=False)
     elif original_ext == 'json':
         df.to_json(filepath, orient='records', indent=2)
