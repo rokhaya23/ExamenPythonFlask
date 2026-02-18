@@ -171,24 +171,32 @@ def data_structured(df):
     #traitement des listes
     if list_cols:
         for col in list_cols:
-            sample_value = df_flat[col].dropna().iloc[0]
-            print(f"      Exemple de valeur : {sample_value}")
+            sample_value = df_flat[col].dropna().iloc[0] if len(df_flat[col].dropna()) > 0 else None
 
-            #Convertir liste en string séparé par virgules
+            if sample_value is not None:
+                print(f"      Exemple de valeur : {sample_value}")
+
             try:
+                # Parser les strings JSON pour les listes si nécessaire
+                if sample_value and isinstance(sample_value, str):
+                    df_flat[col] = df_flat[col].apply(
+                        lambda x: json.loads(x) if isinstance(x, str) and x.strip().startswith('[') else x
+                    )
+
+                # ✅ NOUVEAU : Convertir en JSON string valide au lieu de ', '.join()
                 df_flat[col] = df_flat[col].apply(
-                    lambda x: ', '.join(map(str, x)) if isinstance(x, list) else x
+                    lambda x: json.dumps(x) if isinstance(x, list) and len(x) > 0 else ""
                 )
-                print(f"      → Converti en chaîne de caractères")
+                print(f"      → Converti en JSON string")
 
                 stats['transformations'].append({
-                    'type': 'list_to_string',
+                    'type': 'list_to_json',
                     'column': col,
-                    'separator': ', '
+                    'format': 'JSON'
                 })
 
             except Exception as e:
-                print(f"Erreur : {e}")
+                print(f"      ⚠️ Erreur : {e}")
                 df_flat[col] = df_flat[col].astype(str)
 
     #traitement de mixed_cols
@@ -201,11 +209,48 @@ def data_structured(df):
                 'column': col
             })
 
-    #nettoyer les types de données
+    #nettoyer les types de données avec protection des colonnes sensibles
     for col in df_flat.columns:
-        # Essayer de convertir en numérique si possible
         try:
-            df_flat[col] = pd.to_numeric(df_flat[col])
+            # Vérifier si la colonne contient des données à protéger
+            sample_values = df_flat[col].dropna().head(10)
+
+            if len(sample_values) == 0:
+                continue
+
+            should_protect = False
+
+            # Protection 1 : Colonnes avec caractères non-numériques
+            for val in sample_values:
+                val_str = str(val)
+                # Contient @ (email), lettres majoritaires, ou espaces multiples
+                if '@' in val_str or val_str.replace(' ', '').isalpha() or val_str.count(' ') > 1:
+                    should_protect = True
+                    break
+
+            # Protection 2 : Nombres longs (IDs, téléphones)
+            if not should_protect:
+                non_null_values = df_flat[col].dropna()
+                if len(non_null_values) > 0:
+                    sample_check = non_null_values.head(min(10, len(non_null_values)))
+                    has_long_numbers = []
+
+                    for val in sample_check:
+                        try:
+                            str_val = str(int(abs(float(val)))) if pd.notna(val) else ''
+                            num_digits = len(str_val)
+                            has_long_numbers.append(num_digits >= 7)
+                        except:
+                            pass
+
+                    # Si 50%+ ont 7+ chiffres, c'est probablement un ID ou téléphone
+                    if len(has_long_numbers) > 0 and sum(has_long_numbers) / len(has_long_numbers) >= 0.5:
+                        should_protect = True
+
+            # Ne convertir que si pas protégé
+            if not should_protect:
+                df_flat[col] = pd.to_numeric(df_flat[col], errors='ignore')
+
         except:
             pass
 
