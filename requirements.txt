@@ -6,5 +6,6 @@ openpyxl # Lecture / écriture de fichiers Excel (.xlsx)
 lxml # Traitement de XML et HTML
 werkzeug  # securise et normalise les fichiers
 mysql-connector-python
+xmltodict
 
 

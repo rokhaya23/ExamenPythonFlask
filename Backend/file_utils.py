@@ -1,5 +1,6 @@
 import json
 
+import numpy as np
 import pandas as pd
 import xmltodict
 
@@ -185,7 +186,7 @@ def data_structured(df):
 
                 # ✅ NOUVEAU : Convertir en JSON string valide au lieu de ', '.join()
                 df_flat[col] = df_flat[col].apply(
-                    lambda x: json.dumps(x) if isinstance(x, list) and len(x) > 0 else ""
+                    lambda x: json.dumps(x) if isinstance(x, list) and len(x) > 0 else np.nan
                 )
                 print(f"      → Converti en JSON string")
 
