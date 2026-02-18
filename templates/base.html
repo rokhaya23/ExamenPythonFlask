@@ -3,62 +3,308 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% block title %}Data Processing API{% endblock %}</title>
+    <title>{% block title %}DataApp{% endblock %}</title>
 
-    <!-- Bootstrap CDN -->
+    <!-- Bootstrap -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- Bootstrap Icons -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
-
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
     <!-- CSS local -->
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+    <style>
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --primary:        #0ea5e9;   /* sky-500 */
+            --primary-light:  #e0f2fe;   /* sky-100 */
+            --primary-dark:   #0284c7;   /* sky-600 */
+            --primary-text:   #0369a1;   /* sky-700 */
+            --sidebar-bg:     #ffffff;
+            --sidebar-border: #e2e8f0;
+            --sidebar-width:  230px;
+            --header-height:  58px;
+            --text-main:      #0f172a;
+            --text-muted:     #64748b;
+            --border:         #e2e8f0;
+            --bg:             #f1f5f9;
+            --surface:        #ffffff;
+        }
+
+        body {
+            font-family: 'DM Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            min-height: 100vh;
+        }
+
+        /* ══════════════════════════
+           SIDEBAR — claire
+        ══════════════════════════ */
+        .sidebar {
+            position: fixed;
+            top: 0; left: 0;
+            width: var(--sidebar-width);
+            height: 100vh;
+            background: var(--sidebar-bg);
+            border-right: 1px solid var(--sidebar-border);
+            display: flex;
+            flex-direction: column;
+            z-index: 100;
+        }
+
+        /* Logo */
+        .sidebar-logo {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 1.1rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            text-decoration: none;
+        }
+        .sidebar-logo-icon {
+            width: 34px; height: 34px;
+            background: var(--primary);
+            border-radius: 9px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 0.95rem;
+            color: #fff;
+            flex-shrink: 0;
+            box-shadow: 0 3px 10px rgba(14,165,233,0.35);
+        }
+        .sidebar-logo-text {
+            font-family: 'Syne', sans-serif;
+            font-weight: 700;
+            font-size: 1.05rem;
+            color: var(--text-main);
+            letter-spacing: -0.01em;
+        }
+        .sidebar-logo-text span { color: var(--primary); }
+
+        /* Nav section */
+        .sidebar-section {
+            padding: 1.1rem 0.75rem;
+            flex: 1;
+        }
+        .sidebar-section-title {
+            font-size: 0.63rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: #94a3b8;
+            padding: 0 0.5rem;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Nav links */
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.575rem 0.75rem;
+            border-radius: 8px;
+            color: var(--text-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            text-decoration: none;
+            transition: all 0.15s;
+            margin-bottom: 0.15rem;
+        }
+        .nav-link i {
+            width: 16px;
+            text-align: center;
+            font-size: 0.875rem;
+            flex-shrink: 0;
+        }
+        .nav-link:hover {
+            background: var(--bg);
+            color: var(--text-main);
+        }
+        .nav-link.active {
+            background: var(--primary-light);
+            color: var(--primary-text);
+            font-weight: 600;
+        }
+        .nav-link.active i { color: var(--primary); }
+
+        /* Sidebar footer */
+        .sidebar-footer {
+            padding: 0.875rem 1.25rem;
+            border-top: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+        }
+        .sidebar-footer-avatar {
+            width: 30px; height: 30px;
+            background: var(--primary-light);
+            border-radius: 8px;
+            display: flex; align-items: center; justify-content: center;
+            color: var(--primary-text);
+            font-size: 0.72rem;
+            font-weight: 700;
+            flex-shrink: 0;
+        }
+        .sidebar-footer-text {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            line-height: 1.4;
+        }
+        .sidebar-footer-text strong {
+            display: block;
+            color: var(--text-main);
+            font-weight: 600;
+            font-size: 0.78rem;
+        }
+
+        /* ══════════════════════════
+           HEADER
+        ══════════════════════════ */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: var(--sidebar-width);
+            right: 0;
+            height: var(--header-height);
+            background: var(--surface);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            z-index: 99;
+        }
+
+        /* Search */
+        .search-box {
+            position: relative;
+            width: 260px;
+        }
+        .search-box .search-icon {
+            position: absolute;
+            left: 0.7rem;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #94a3b8;
+            font-size: 0.78rem;
+            pointer-events: none;
+        }
+        .search-box input {
+            width: 100%;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.42rem 0.875rem 0.42rem 2rem;
+            font-size: 0.82rem;
+            color: var(--text-main);
+            font-family: 'DM Sans', sans-serif;
+            outline: none;
+            transition: border-color 0.15s, box-shadow 0.15s;
+        }
+        .search-box input::placeholder { color: #94a3b8; }
+        .search-box input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(14,165,233,0.12);
+        }
+
+        /* Header actions */
+        .header-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+        .h-icon-btn {
+            width: 34px; height: 34px;
+            border-radius: 8px;
+            background: var(--bg);
+            border: 1px solid var(--border);
+            display: flex; align-items: center; justify-content: center;
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: all 0.15s;
+            position: relative;
+        }
+        .h-icon-btn:hover {
+            background: var(--primary-light);
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+        .h-icon-btn .notif-dot {
+            position: absolute;
+            top: 6px; right: 6px;
+            width: 6px; height: 6px;
+            background: #ef4444;
+            border-radius: 50%;
+            border: 1.5px solid var(--surface);
+        }
+
+        /* ══════════════════════════
+           MAIN CONTENT
+        ══════════════════════════ */
+        .main-content {
+            margin-left: var(--sidebar-width);
+            margin-top: var(--header-height);
+            min-height: calc(100vh - var(--header-height));
+        }
+    </style>
 </head>
 <body>
 
     <!-- SIDEBAR -->
     <div class="sidebar">
-        <div class="sidebar-logo">
-            <i class="bi bi-bar-chart-fill"></i>
-            <h4>DataApp</h4>
-        </div>
+        <a href="/" class="sidebar-logo">
+            <div class="sidebar-logo-icon">
+                <i class="fas fa-database"></i>
+            </div>
+            <span class="sidebar-logo-text">Data<span>App</span></span>
+        </a>
 
         <div class="sidebar-section">
             <div class="sidebar-section-title">Menu Principal</div>
             <nav>
                 <a class="nav-link" href="/">
-                    <i class="bi bi-cart-fill"></i>
+                    <i class="fas fa-home"></i>
                     <span>Accueil</span>
                 </a>
                 <a class="nav-link" href="/upload">
-                    <i class="bi bi-cloud-upload-fill"></i>
+                    <i class="fas fa-cloud-upload-alt"></i>
                     <span>Upload & Traitement</span>
                 </a>
                 <a class="nav-link" href="/dashboard">
-                    <i class="bi bi-grid-fill"></i>
+                    <i class="fas fa-chart-bar"></i>
                     <span>Dashboard</span>
                 </a>
             </nav>
         </div>
 
+        <div class="sidebar-footer">
+            <div class="sidebar-footer-avatar">DA</div>
+            <div class="sidebar-footer-text">
+                <strong>DataApp</strong>
+                v1.0 — Data Processing
+            </div>
+        </div>
     </div>
 
     <!-- HEADER -->
     <header class="main-header">
-        <div class="search-box position-relative">
+        <div class="search-box">
             <i class="bi bi-search search-icon"></i>
-            <input type="text" placeholder="Rechercher ou taper une commande..." class="form-control">
+            <input type="text" placeholder="Rechercher ou taper une commande...">
         </div>
 
         <div class="header-actions">
-            <button class="icon-btn">
-                <i class="bi bi-moon-fill"></i>
+            <button class="h-icon-btn" title="Thème">
+                <i class="fas fa-moon"></i>
             </button>
-            <button class="icon-btn position-relative">
-                <i class="bi bi-bell-fill"></i>
-                <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
-                    3
-                </span>
+            <button class="h-icon-btn" title="Notifications">
+                <i class="fas fa-bell"></i>
+                <span class="notif-dot"></span>
             </button>
         </div>
     </header>
@@ -70,5 +316,18 @@
 
     <!-- Bootstrap JS -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Active nav highlight
+        const links = document.querySelectorAll('.nav-link');
+        links.forEach(link => {
+            const href = link.getAttribute('href');
+            if (href === '/' && window.location.pathname === '/') {
+                link.classList.add('active');
+            } else if (href !== '/' && window.location.pathname.startsWith(href)) {
+                link.classList.add('active');
+            }
+        });
+    </script>
 </body>
 </html>

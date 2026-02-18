@@ -1,291 +1,560 @@
 {% extends "base.html" %}
 
-{% block title %}API Data Processing{% endblock %}
+{% block title %}DataApp — Automatisation du Data Processing{% endblock %}
 
 {% block content %}
-
 <style>
-    .intro-section {
-        background: white;
-        border-radius: 0.75rem;
-        padding: 2rem;
-        margin-bottom: 2rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        border-left: 4px solid #4F46E5;
+    @import url('https://fonts.googleapis.com/css2?family=Syne:wght@600;700;800&family=DM+Sans:wght@400;500&display=swap');
+
+    :root {
+        --primary: #4f46e5;
+        --primary-light: #eef2ff;
+        --primary-dark: #3730a3;
+        --success: #10b981;
+        --text-main: #0f172a;
+        --text-muted: #64748b;
+        --border: #e2e8f0;
+        --bg: #f8fafc;
     }
 
-    .section-card {
-        background: white;
-        border-radius: 0.75rem;
-        padding: 1.75rem;
-        margin-bottom: 1.5rem;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
-        transition: all 0.2s;
+    .home-wrap {
+        font-family: 'DM Sans', sans-serif;
+        background: var(--bg);
+        min-height: 100vh;
     }
 
-    .section-card:hover {
-        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    /* ═══════════════════════════════
+       HERO
+    ═══════════════════════════════ */
+    .hero {
+        position: relative;
+        background: var(--text-main);
+        padding: 5rem 3rem 4rem;
+        overflow: hidden;
+        border-radius: 0 0 2rem 2rem;
+        margin-bottom: 3rem;
     }
 
-    .section-title {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: #1F2937;
-        margin-bottom: 1rem;
-        display: flex;
+    /* Grid noise texture */
+    .hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background-image:
+            linear-gradient(rgba(79,70,229,0.15) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(79,70,229,0.15) 1px, transparent 1px);
+        background-size: 40px 40px;
+        mask-image: radial-gradient(ellipse 80% 80% at 50% 0%, black 40%, transparent 100%);
+    }
+
+    /* Glow blob */
+    .hero::after {
+        content: '';
+        position: absolute;
+        top: -80px;
+        right: -80px;
+        width: 500px;
+        height: 500px;
+        background: radial-gradient(circle, rgba(99,102,241,0.35) 0%, transparent 70%);
+        pointer-events: none;
+    }
+
+    .hero-inner {
+        position: relative;
+        z-index: 1;
+        max-width: 700px;
+    }
+
+    .hero-tag {
+        display: inline-flex;
         align-items: center;
         gap: 0.5rem;
-    }
-
-    .format-badge {
-        display: inline-block;
-        padding: 0.5rem 1rem;
-        background: #F3F4F6;
-        border-radius: 0.5rem;
+        background: rgba(99,102,241,0.2);
+        border: 1px solid rgba(99,102,241,0.4);
+        color: #a5b4fc;
+        padding: 0.35rem 0.9rem;
+        border-radius: 20px;
+        font-size: 0.78rem;
         font-weight: 500;
-        color: #4B5563;
-        margin-right: 0.5rem;
-        margin-bottom: 0.5rem;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+        margin-bottom: 1.5rem;
     }
-
-    .process-item {
-        padding: 0.75rem 0;
-        border-bottom: 1px solid #E5E7EB;
-        display: flex;
-        align-items: start;
-        gap: 0.75rem;
-    }
-
-    .process-item:last-child {
-        border-bottom: none;
-    }
-
-    .process-number {
-        background: #4F46E5;
-        color: white;
-        width: 28px;
-        height: 28px;
+    .hero-tag span {
+        width: 6px; height: 6px;
+        background: #818cf8;
         border-radius: 50%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 0.875rem;
-        font-weight: 600;
-        flex-shrink: 0;
+        display: inline-block;
+        animation: pulse-dot 2s ease-in-out infinite;
+    }
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; transform: scale(1); }
+        50%       { opacity: 0.4; transform: scale(0.7); }
     }
 
-    .tech-item {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-        padding: 0.75rem;
-        background: #F9FAFB;
-        border-radius: 0.5rem;
-        margin-bottom: 0.75rem;
+    .hero h1 {
+        font-family: 'Syne', sans-serif;
+        font-size: clamp(2rem, 5vw, 3.25rem);
+        font-weight: 800;
+        color: #fff;
+        line-height: 1.1;
+        margin-bottom: 1.25rem;
+    }
+    .hero h1 em {
+        font-style: normal;
+        color: #818cf8;
     }
 
-    .tech-icon {
-        width: 40px;
-        height: 40px;
-        background: #4F46E5;
-        color: white;
-        border-radius: 0.5rem;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.25rem;
+    .hero p {
+        font-size: 1rem;
+        color: #94a3b8;
+        line-height: 1.7;
+        max-width: 520px;
+        margin-bottom: 2rem;
     }
 
-    .btn-primary-custom {
-        background: #4F46E5;
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 0.5rem;
+    .hero-actions {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        flex-wrap: wrap;
+    }
+
+    .btn-hero-primary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--primary);
+        color: #fff;
         border: none;
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.925rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: all 0.2s;
+        box-shadow: 0 4px 14px rgba(79,70,229,0.4);
+    }
+    .btn-hero-primary:hover {
+        background: var(--primary-dark);
+        color: #fff;
+        transform: translateY(-1px);
+        box-shadow: 0 6px 20px rgba(79,70,229,0.5);
+    }
+
+    .btn-hero-secondary {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: transparent;
+        color: #94a3b8;
+        border: 1px solid rgba(148,163,184,0.3);
+        border-radius: 10px;
+        padding: 0.75rem 1.5rem;
+        font-size: 0.925rem;
         font-weight: 500;
+        text-decoration: none;
         transition: all 0.2s;
     }
+    .btn-hero-secondary:hover {
+        border-color: rgba(148,163,184,0.6);
+        color: #e2e8f0;
+    }
 
-    .btn-primary-custom:hover {
-        background: #4338CA;
+    /* Floating stat chips in hero */
+    .hero-stats {
+        position: absolute;
+        right: 3rem;
+        bottom: 3rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        z-index: 1;
+    }
+    .hero-chip {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        backdrop-filter: blur(10px);
+        border-radius: 12px;
+        padding: 0.65rem 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.65rem;
+        color: #e2e8f0;
+        font-size: 0.825rem;
+    }
+    .hero-chip i { color: #818cf8; font-size: 1rem; }
+    .hero-chip strong { font-weight: 600; }
+
+    @media (max-width: 768px) {
+        .hero-stats { display: none; }
+        .hero { padding: 3rem 1.5rem 3rem; }
+    }
+
+    /* ═══════════════════════════════
+       BODY SECTIONS
+    ═══════════════════════════════ */
+    .page-body {
+        padding: 0 2rem 3rem;
+    }
+
+    .section-label {
+        font-size: 0.72rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--primary);
+        margin-bottom: 0.4rem;
+    }
+    .section-heading {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 0.5rem;
+    }
+    .section-sub {
+        color: var(--text-muted);
+        font-size: 0.9rem;
+        margin-bottom: 2rem;
+    }
+
+    /* ── Format cards ── */
+    .formats-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+    .format-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem;
+        display: flex;
+        align-items: center;
+        gap: 0.875rem;
+        transition: all 0.2s;
+        cursor: default;
+    }
+    .format-card:hover {
+        border-color: var(--primary);
+        box-shadow: 0 4px 12px rgba(79,70,229,0.1);
+        transform: translateY(-2px);
+    }
+    .format-icon {
+        width: 42px; height: 42px;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 1.1rem;
+        flex-shrink: 0;
+    }
+    .format-card:nth-child(1) .format-icon { background: #dcfce7; color: #16a34a; }
+    .format-card:nth-child(2) .format-icon { background: #dbeafe; color: #2563eb; }
+    .format-card:nth-child(3) .format-icon { background: #fef3c7; color: #d97706; }
+    .format-card:nth-child(4) .format-icon { background: #fce7f3; color: #db2777; }
+    .format-name { font-weight: 700; font-size: 0.9rem; color: var(--text-main); }
+    .format-desc { font-size: 0.75rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    /* ── Process steps ── */
+    .steps-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+    .step-card {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.5rem;
+        display: flex;
+        gap: 1rem;
+        align-items: flex-start;
+        transition: all 0.2s;
+    }
+    .step-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.07);
+        transform: translateY(-2px);
+    }
+    .step-num {
+        width: 36px; height: 36px;
+        background: var(--primary);
+        color: #fff;
+        border-radius: 10px;
+        display: flex; align-items: center; justify-content: center;
+        font-family: 'Syne', sans-serif;
+        font-weight: 700;
+        font-size: 0.9rem;
+        flex-shrink: 0;
+    }
+    .step-title {
+        font-weight: 700;
+        font-size: 0.95rem;
+        color: var(--text-main);
+        margin-bottom: 0.3rem;
+    }
+    .step-desc {
+        font-size: 0.825rem;
+        color: var(--text-muted);
+        line-height: 1.6;
+        margin: 0;
+    }
+
+    /* ── Output section ── */
+    .outputs-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 1rem;
+        margin-bottom: 3rem;
+    }
+    .output-item {
+        background: #fff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+    }
+    .output-dot {
+        width: 10px; height: 10px;
+        border-radius: 50%;
+        background: var(--primary);
+        flex-shrink: 0;
+    }
+    .output-text { font-size: 0.875rem; color: var(--text-main); font-weight: 500; }
+    .output-sub  { font-size: 0.775rem; color: var(--text-muted); margin-top: 0.1rem; }
+
+    /* ── CTA banner ── */
+    .cta-banner {
+        background: linear-gradient(135deg, var(--primary) 0%, #6366f1 50%, #818cf8 100%);
+        border-radius: 16px;
+        padding: 2.5rem 3rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+    .cta-banner::before {
+        content: '';
+        position: absolute;
+        top: -60px; right: -60px;
+        width: 250px; height: 250px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+    .cta-banner::after {
+        content: '';
+        position: absolute;
+        bottom: -40px; left: 30%;
+        width: 180px; height: 180px;
+        background: rgba(255,255,255,0.05);
+        border-radius: 50%;
+    }
+    .cta-text h2 {
+        font-family: 'Syne', sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: #fff;
+        margin: 0 0 0.4rem;
+    }
+    .cta-text p { color: rgba(255,255,255,0.75); font-size: 0.9rem; margin: 0; }
+    .btn-cta {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: #fff;
+        color: var(--primary);
+        border: none;
+        border-radius: 10px;
+        padding: 0.85rem 1.75rem;
+        font-size: 0.925rem;
+        font-weight: 700;
+        text-decoration: none;
+        white-space: nowrap;
+        transition: all 0.2s;
+        position: relative;
+        z-index: 1;
+        flex-shrink: 0;
+        box-shadow: 0 4px 14px rgba(0,0,0,0.15);
+    }
+    .btn-cta:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0,0,0,0.2);
+        color: var(--primary-dark);
+    }
+
+    @media (max-width: 768px) {
+        .formats-grid { grid-template-columns: repeat(2, 1fr); }
+        .steps-grid, .outputs-grid { grid-template-columns: 1fr; }
+        .cta-banner { flex-direction: column; text-align: center; padding: 2rem 1.5rem; }
+        .page-body { padding: 0 1rem 2rem; }
     }
 </style>
 
-<!-- Section Introduction -->
-<div class="intro-section">
-    <h1 class="fw-bold mb-3">API d'Automatisation du Data Processing</h1>
-    <p class="text-muted mb-0">
-        Interface web pour l'automatisation du nettoyage et de la normalisation des données.
-        Cette API traite automatiquement vos fichiers de données en appliquant les meilleures
-        pratiques de data processing.
-    </p>
-</div>
+<div class="home-wrap">
 
-<!-- Contexte et Objectifs -->
-<div class="row mb-4">
-    <div class="col-md-6">
-        <div class="section-card">
-            <div class="section-title">
-                <i class="bi bi-info-circle"></i>
-                Contexte
-            </div>
-            <p class="text-muted mb-0">
-                Dans le cadre du traitement de données, cette API automatise le processus
-                de Data Processing, permettant un gain de temps considérable et une
-                standardisation des procédures de nettoyage.
+    <!-- ── HERO ── -->
+    <div class="hero">
+        <div class="hero-inner">
+            <div class="hero-tag"><span></span> Automatisation Data Processing</div>
+            <h1>Nettoyez vos données,<br><em>sans effort.</em></h1>
+            <p>
+                Déposez votre fichier, notre pipeline détecte et corrige automatiquement
+                les valeurs manquantes, les doublons et les anomalies — en quelques secondes.
             </p>
-        </div>
-    </div>
-
-    <div class="col-md-6">
-        <div class="section-card">
-            <div class="section-title">
-                <i class="bi bi-bullseye"></i>
-                Objectif
+            <div class="hero-actions">
+                <a href="/upload" class="btn-hero-primary">
+                    <i class="fas fa-upload"></i> Commencer le traitement
+                </a>
+                <a href="/dashboard" class="btn-hero-secondary">
+                    <i class="fas fa-chart-bar"></i> Voir le dashboard
+                </a>
             </div>
-            <p class="text-muted mb-0">
-                Automatiser la phase de Data Processing (nettoyage des données) en utilisant
-                Python et ses technologies pour traiter efficacement différents formats de fichiers.
-            </p>
         </div>
-    </div>
-</div>
 
-<!-- Formats supportés -->
-<div class="section-card">
-    <div class="section-title">
-        <i class="bi bi-file-earmark-text"></i>
-        Formats de fichiers pris en charge
-    </div>
-    <div>
-        <span class="format-badge"><i class="bi bi-filetype-csv"></i> CSV</span>
-        <span class="format-badge"><i class="bi bi-file-earmark-excel"></i> Excel (.xls, .xlsx)</span>
-        <span class="format-badge"><i class="bi bi-filetype-json"></i> JSON</span>
-        <span class="format-badge"><i class="bi bi-filetype-xml"></i> XML</span>
-    </div>
-</div>
-
-<!-- Traitements automatisés -->
-<div class="section-card">
-    <div class="section-title">
-        <i class="bi bi-gear"></i>
-        Traitements automatisés
-    </div>
-
-    <div class="process-item">
-        <div class="process-number">1</div>
-        <div>
-            <strong>Valeurs manquantes</strong>
-            <p class="text-muted mb-0 small">Détection et traitement automatique des données manquantes</p>
-        </div>
-    </div>
-
-    <div class="process-item">
-        <div class="process-number">2</div>
-        <div>
-            <strong>Valeurs aberrantes</strong>
-            <p class="text-muted mb-0 small">Identification et correction des outliers</p>
-        </div>
-    </div>
-
-    <div class="process-item">
-        <div class="process-number">3</div>
-        <div>
-            <strong>Valeurs dupliquées</strong>
-            <p class="text-muted mb-0 small">Détection et suppression des doublons</p>
-        </div>
-    </div>
-
-    <div class="process-item">
-        <div class="process-number">4</div>
-        <div>
-            <strong>Normalisation</strong>
-            <p class="text-muted mb-0 small">Standardisation des données numériques</p>
-        </div>
-    </div>
-</div>
-
-<!-- Technologies utilisées -->
-<!-- <div class="row">
-    <div class="col-md-6">
-        <div class="section-card">
-            <div class="section-title">
-                <i class="bi bi-code-square"></i>
-                Technologies Backend
+        <!-- Floating chips -->
+        <div class="hero-stats">
+            <div class="hero-chip">
+                <i class="fas fa-file-alt"></i>
+                <div><strong>4 formats</strong> supportés</div>
             </div>
+            <div class="hero-chip">
+                <i class="fas fa-bolt"></i>
+                <div><strong>4 traitements</strong> automatisés</div>
+            </div>
+            <div class="hero-chip">
+                <i class="fas fa-download"></i>
+                <div>Export dans le <strong>format d'origine</strong></div>
+            </div>
+        </div>
+    </div>
 
-            <div class="tech-item">
-                <div class="tech-icon">
-                    <i class="bi bi-server"></i>
-                </div>
+    <div class="page-body">
+
+        <!-- ── FORMATS ── -->
+        <div class="section-label">Compatibilité</div>
+        <div class="section-heading">Formats pris en charge</div>
+        <div class="section-sub">Importez vos fichiers dans l'un de ces formats, exportez dans le même.</div>
+
+        <div class="formats-grid">
+            <div class="format-card">
+                <div class="format-icon"><i class="fas fa-file-csv"></i></div>
                 <div>
-                    <strong>Flask</strong>
-                    <p class="text-muted mb-0 small">Serveur web et API REST</p>
+                    <div class="format-name">CSV</div>
+                    <div class="format-desc">Comma-separated values</div>
                 </div>
             </div>
-
-            <div class="tech-item">
-                <div class="tech-icon">
-                    <i class="bi bi-file-earmark-code"></i>
-                </div>
+            <div class="format-card">
+                <div class="format-icon"><i class="fas fa-file-excel"></i></div>
                 <div>
-                    <strong>Python</strong>
-                    <p class="text-muted mb-0 small">Pandas, NumPy pour le traitement</p>
+                    <div class="format-name">Excel</div>
+                    <div class="format-desc">.xls / .xlsx</div>
+                </div>
+            </div>
+            <div class="format-card">
+                <div class="format-icon"><i class="fas fa-file-code"></i></div>
+                <div>
+                    <div class="format-name">JSON</div>
+                    <div class="format-desc">Structuré & semi-structuré</div>
+                </div>
+            </div>
+            <div class="format-card">
+                <div class="format-icon"><i class="fas fa-code"></i></div>
+                <div>
+                    <div class="format-name">XML</div>
+                    <div class="format-desc">Données imbriquées</div>
                 </div>
             </div>
         </div>
-    </div>
 
-    <div class="col-md-6">
-        <div class="section-card">
-            <div class="section-title">
-                <i class="bi bi-palette"></i>
-                Technologies Frontend
-            </div>
+        <!-- ── TRAITEMENTS ── -->
+        <div class="section-label">Pipeline</div>
+        <div class="section-heading">Traitements automatisés</div>
+        <div class="section-sub">Chaque fichier passe par une séquence de 4 étapes de nettoyage.</div>
 
-            <div class="tech-item">
-                <div class="tech-icon">
-                    <i class="bi bi-window"></i>
-                </div>
+        <div class="steps-grid">
+            <div class="step-card">
+                <div class="step-num">1</div>
                 <div>
-                    <strong>HTML / CSS / JavaScript</strong>
-                    <p class="text-muted mb-0 small">Interface utilisateur</p>
+                    <div class="step-title">Valeurs manquantes</div>
+                    <p class="step-desc">Détection et imputation intelligente des données manquantes par moyenne, médiane ou régression selon le type de colonne.</p>
                 </div>
             </div>
-
-            <div class="tech-item">
-                <div class="tech-icon">
-                    <i class="bi bi-bootstrap"></i>
-                </div>
+            <div class="step-card">
+                <div class="step-num">2</div>
                 <div>
-                    <strong>Bootstrap</strong>
-                    <p class="text-muted mb-0 small">Framework CSS responsive</p>
+                    <div class="step-title">Valeurs aberrantes</div>
+                    <p class="step-desc">Identification des outliers par méthode IQR et application d'un capping pour conserver la distribution des données.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">3</div>
+                <div>
+                    <div class="step-title">Doublons</div>
+                    <p class="step-desc">Détection et suppression des lignes dupliquées, avec rapport sur le nombre et le pourcentage de doublons trouvés.</p>
+                </div>
+            </div>
+            <div class="step-card">
+                <div class="step-num">4</div>
+                <div>
+                    <div class="step-title">Normalisation</div>
+                    <p class="step-desc">Standardisation des variables numériques pour les ramener sur une échelle commune, en excluant les identifiants.</p>
                 </div>
             </div>
         </div>
-    </div>
-</div> -->
 
-<!-- Résultats -->
-<div class="section-card mt-3">
-    <div class="section-title">
-        <i class="bi bi-download"></i>
-        Résultats générés
-    </div>
-    <ul class="mb-3">
-        <li>Fichier nettoyé et normalisé (même format que l'entrée)</li>
-        <li>Rapport de traitement avec statistiques détaillées</li>
-        <li>Dashboard de visualisation des transformations</li>
-        <li>Comparaison avant/après traitement</li>
-    </ul>
-</div>
+        <!-- ── RÉSULTATS ── -->
+        <div class="section-label">Livrables</div>
+        <div class="section-heading">Ce que vous obtenez</div>
+        <div class="section-sub">Un rapport complet et un fichier propre, prêts à l'emploi.</div>
 
-<!-- Call to action -->
-<div class="text-center mt-4">
-    <button class="btn-primary-custom" onclick="window.location.href='/upload'">
-        <i class="bi bi-cloud-upload me-2"></i>
-        Commencer le traitement
-    </button>
+        <div class="outputs-grid">
+            <div class="output-item">
+                <div class="output-dot"></div>
+                <div>
+                    <div class="output-text">Fichier nettoyé & normalisé</div>
+                    <div class="output-sub">Exporté dans le même format que l'entrée</div>
+                </div>
+            </div>
+            <div class="output-item">
+                <div class="output-dot" style="background:#10b981;"></div>
+                <div>
+                    <div class="output-text">Rapport de traitement détaillé</div>
+                    <div class="output-sub">Statistiques par étape et par colonne</div>
+                </div>
+            </div>
+            <div class="output-item">
+                <div class="output-dot" style="background:#f59e0b;"></div>
+                <div>
+                    <div class="output-text">Dashboard de visualisation</div>
+                    <div class="output-sub">Comparaison avant / après traitement</div>
+                </div>
+            </div>
+            <div class="output-item">
+                <div class="output-dot" style="background:#6366f1;"></div>
+                <div>
+                    <div class="output-text">Détection de la structure</div>
+                    <div class="output-sub">Semi-structuré automatiquement aplati</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ── CTA ── -->
+        <div class="cta-banner">
+            <div class="cta-text">
+                <h2>Prêt à nettoyer vos données ?</h2>
+                <p>Importez votre fichier et obtenez un résultat propre en quelques secondes.</p>
+            </div>
+            <a href="/upload" class="btn-cta">
+                <i class="fas fa-upload"></i> Lancer le traitement
+            </a>
+        </div>
+
+    </div>
 </div>
 
 {% endblock %}

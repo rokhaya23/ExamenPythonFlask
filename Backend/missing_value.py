@@ -69,6 +69,13 @@ def missing_values(df,max_missing_pct_predictors=0.20):
 
             # traitement colonnes numériques
             if col in numeric_cols:
+
+                if df_cleaned[col].notna().sum() == 0:
+                    print(f"   ⚠️ '{col}' : Colonne entièrement vide, suppression")
+                    df_cleaned = df_cleaned.drop(columns=[col])
+                    numeric_cols.remove(col)
+                    continue
+
                 if numb_numeric==1 or corr_matrice is None:
                     median=df_cleaned[col].median()
                     df_cleaned[col].fillna(median,inplace=True)
@@ -211,7 +218,7 @@ def missing_values(df,max_missing_pct_predictors=0.20):
 
                 if col in numeric_cols:
                     median = df_cleaned[col].median()
-                    df_cleaned[col].fillna(median, inplace=True)
+                    df_cleaned[col] = df_cleaned[col].fillna(median)
                     imputation_details.append({
                         'column': col,
                         'methode': 'Median (fallback)',

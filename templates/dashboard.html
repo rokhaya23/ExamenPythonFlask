@@ -1,158 +1,331 @@
 {% extends "base.html" %}
 
-{% block title %}API Data Processing{% endblock %}
+{% block title %}Dashboard — DataApp{% endblock %}
 
 {% block content %}
-    <style>
-        :root {
-            --primary: #4f46e5;
-            --success: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-        }
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-light: #eef2ff;
+        --success: #10b981;
+        --success-light: #d1fae5;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --warning-light: #fef3c7;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --border: #e5e7eb;
+        --surface: #ffffff;
+        --bg: #f9fafb;
+    }
 
-        .dashboard-container {
-            padding: 2rem;
-        }
+    .dashboard-wrapper {
+        padding: 2rem 2.5rem;
+        background: var(--bg);
+        min-height: 100vh;
+    }
 
-        .stats-card {
-            background: white;
-            border-radius: 15px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            transition: transform 0.3s;
-        }
+    /* ── Header ── */
+    .page-header {
+        margin-bottom: 2rem;
+    }
+    .page-header h1 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0;
+    }
+    .page-header p {
+        color: var(--text-muted);
+        font-size: 0.875rem;
+        margin: 0.25rem 0 0;
+    }
 
-        .stats-card:hover {
-            transform: translateY(-5px);
-        }
+    /* ── Stat Cards ── */
+    .stats-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1.25rem;
+        margin-bottom: 2rem;
+    }
 
-        .stat-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-        }
+    .stat-card {
+        background: var(--surface);
+        border-radius: 12px;
+        padding: 1.25rem 1.5rem;
+        border: 1px solid var(--border);
+        display: flex;
+        align-items: center;
+        gap: 1rem;
+        transition: box-shadow 0.2s;
+    }
+    .stat-card:hover {
+        box-shadow: 0 4px 12px rgba(0,0,0,0.07);
+    }
 
-        .files-table {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
+    .stat-icon-wrap {
+        width: 44px;
+        height: 44px;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+        font-size: 1.1rem;
+    }
+    .stat-icon-wrap.indigo  { background: var(--primary-light); color: var(--primary); }
+    .stat-icon-wrap.green   { background: var(--success-light); color: var(--success); }
+    .stat-icon-wrap.amber   { background: var(--warning-light); color: var(--warning); }
 
-        .badge-status {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-        }
+    .stat-info p {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        margin: 0 0 0.15rem;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.03em;
+    }
+    .stat-info h2 {
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin: 0;
+        line-height: 1;
+    }
 
-        .btn-view {
-            background: var(--primary);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 8px;
-            transition: all 0.3s;
-        }
+    /* ── Table Card ── */
+    .table-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        overflow: hidden;
+    }
 
-        .btn-view:hover {
-            background: #3730a3;
-            transform: scale(1.05);
-        }
+    .table-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+    }
+    .table-card-header h2 {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 0;
+    }
 
-        .progress-bar-custom {
-            height: 8px;
-            border-radius: 10px;
-        }
-    </style>
-    <div class="dashboard-container">
-        <!-- Header -->
-        <div class="row mb-4">
-            <div class="page-header">
-                <h1>
-                    Dashboard de Nettoyage
-                </h1>
+    .btn-new {
+        background: var(--primary);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.45rem 1rem;
+        font-size: 0.825rem;
+        font-weight: 600;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        transition: background 0.2s;
+    }
+    .btn-new:hover { background: #3730a3; color: #fff; }
+
+    /* ── Table ── */
+    .table-responsive { overflow-x: auto; }
+
+    table.clean-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.875rem;
+    }
+    .clean-table thead tr {
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+    }
+    .clean-table th {
+        padding: 0.75rem 1.25rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        white-space: nowrap;
+        text-align: left;
+    }
+    .clean-table td {
+        padding: 0.85rem 1.25rem;
+        color: var(--text-main);
+        border-bottom: 1px solid var(--border);
+        vertical-align: middle;
+    }
+    .clean-table tbody tr:last-child td { border-bottom: none; }
+    .clean-table tbody tr:hover { background: #fafafa; }
+
+    .file-name {
+        font-weight: 600;
+        color: var(--text-main);
+    }
+    .file-ext {
+        display: inline-block;
+        font-size: 0.7rem;
+        font-weight: 700;
+        padding: 0.15rem 0.45rem;
+        border-radius: 4px;
+        background: var(--primary-light);
+        color: var(--primary);
+        margin-right: 0.4rem;
+        text-transform: uppercase;
+        vertical-align: middle;
+    }
+
+    .rows-info {
+        color: var(--text-muted);
+        font-size: 0.8rem;
+    }
+    .rows-info strong {
+        color: var(--text-main);
+    }
+    .delta-neg { color: var(--danger); font-size: 0.75rem; }
+    .delta-pos { color: var(--success); font-size: 0.75rem; }
+
+    .badge-treatment {
+        background: #ede9fe;
+        color: #6d28d9;
+        border-radius: 20px;
+        padding: 0.25rem 0.65rem;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .badge-ok    { background: var(--success-light); color: #065f46; border-radius: 20px; padding: 0.25rem 0.65rem; font-size: 0.75rem; font-weight: 600; }
+    .badge-err   { background: #fee2e2; color: #991b1b; border-radius: 20px; padding: 0.25rem 0.65rem; font-size: 0.75rem; font-weight: 600; }
+    .badge-pend  { background: var(--warning-light); color: #92400e; border-radius: 20px; padding: 0.25rem 0.65rem; font-size: 0.75rem; font-weight: 600; }
+
+    /* ── Action icons ── */
+    .actions-cell {
+        display: flex;
+        gap: 0.5rem;
+        align-items: center;
+    }
+    .icon-btn {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border: 1px solid var(--border);
+        background: var(--surface);
+        color: var(--text-muted);
+        text-decoration: none;
+        transition: all 0.15s;
+        font-size: 0.85rem;
+    }
+    .icon-btn:hover {
+        background: var(--primary-light);
+        border-color: var(--primary);
+        color: var(--primary);
+    }
+    .icon-btn.download:hover {
+        background: var(--success-light);
+        border-color: var(--success);
+        color: var(--success);
+    }
+    .icon-btn.disabled {
+        opacity: 0.35;
+        pointer-events: none;
+    }
+
+    /* ── Empty state ── */
+    .empty-state {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+    }
+    .empty-state i { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.35; }
+    .empty-state p { font-size: 0.875rem; margin: 0; }
+</style>
+
+<div class="dashboard-wrapper">
+
+    <!-- Header -->
+    <div class="page-header">
+        <h1><i class="fas fa-chart-bar" style="color:var(--primary);margin-right:.5rem;"></i>Dashboard de Nettoyage</h1>
+        <p>Historique et suivi de vos fichiers traités</p>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-row">
+        <div class="stat-card">
+            <div class="stat-icon-wrap indigo"><i class="fas fa-file-alt"></i></div>
+            <div class="stat-info">
+                <p>Fichiers traités</p>
+                <h2 id="totalFiles">—</h2>
             </div>
         </div>
-
-        <!-- Statistiques globales -->
-        <div class="row mb-4">
-            <div class="col-md-4">
-                <div class="stats-card text-center">
-                    <i class="fas fa-file-alt stat-icon text-primary"></i>
-                    <h3 id="totalFiles">0</h3>
-                    <p class="text-muted mb-0">Fichiers traités</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stats-card text-center">
-                    <i class="fas fa-database stat-icon text-success"></i>
-                    <h3 id="totalRows">0</h3>
-                    <p class="text-muted mb-0">Lignes traitées</p>
-                </div>
-            </div>
-            <div class="col-md-4">
-                <div class="stats-card text-center">
-                    <i class="fas fa-check-circle stat-icon text-success"></i>
-                    <h3 id="successRate">0%</h3>
-                    <p class="text-muted mb-0">Taux de succès</p>
-                </div>
+        <div class="stat-card">
+            <div class="stat-icon-wrap green"><i class="fas fa-database"></i></div>
+            <div class="stat-info">
+                <p>Lignes traitées</p>
+                <h2 id="totalRows">—</h2>
             </div>
         </div>
-
-        <!-- Tableau des fichiers -->
-        <div class="files-table">
-            <div class="d-flex justify-content-between align-items-center mb-4">
-                <h3><i class="fas fa-list"></i> Historique des fichiers</h3>
-                <a href="/upload" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Nouveau fichier
-                </a>
-            </div>
-
-            <div class="table-responsive">
-                <table class="table table-hover">
-                    <thead>
-                        <tr>
-                            <th>Fichier</th>
-                            <th>Date</th>
-                            <th>Lignes</th>
-                            <th>Traitements</th>
-                            <th>Statut</th>
-                            <th>Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody id="filesTableBody">
-                        <!-- Rempli par JavaScript -->
-                    </tbody>
-                </table>
+        <div class="stat-card">
+            <div class="stat-icon-wrap amber"><i class="fas fa-check-circle"></i></div>
+            <div class="stat-info">
+                <p>Taux de succès</p>
+                <h2 id="successRate">—</h2>
             </div>
         </div>
     </div>
 
-    <script>
-        // Charger les données au chargement de la page
+    <!-- Files table -->
+    <div class="table-card">
+        <div class="table-card-header">
+            <h2><i class="fas fa-list" style="margin-right:.5rem;color:var(--text-muted);"></i>Historique des fichiers</h2>
+            <a href="/upload" class="btn-new"><i class="fas fa-plus"></i> Nouveau fichier</a>
+        </div>
+        <div class="table-responsive">
+            <table class="clean-table">
+                <thead>
+                    <tr>
+                        <th>Fichier</th>
+                        <th>Date</th>
+                        <th>Lignes</th>
+                        <th>Traitements</th>
+                        <th>Statut</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="filesTableBody">
+                    <!-- Rempli par JavaScript -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
         document.addEventListener('DOMContentLoaded', function() {
             loadDashboardData();
         });
 
         async function loadDashboardData() {
             try {
-                // Récupérer les statistiques
                 const statsResponse = await fetch('/api/dashboard/stats');
                 const stats = await statsResponse.json();
 
-                // Mettre à jour les statistiques
                 if (stats.general) {
                     document.getElementById('totalFiles').textContent = stats.general.total_files || 0;
                     document.getElementById('totalRows').textContent = (stats.general.total_rows_final || 0).toLocaleString();
                     document.getElementById('successRate').textContent = (stats.general.avg_retention_rate || 0).toFixed(1) + '%';
                 }
 
-                // Récupérer la liste des fichiers
                 const filesResponse = await fetch('/api/dashboard/files');
                 const files = await filesResponse.json();
 
-                // Remplir le tableau
                 displayFiles(files);
 
             } catch (error) {
@@ -164,54 +337,66 @@
             const tbody = document.getElementById('filesTableBody');
             tbody.innerHTML = '';
 
+            if (!files || files.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6"><div class="empty-state">
+                    <i class="fas fa-folder-open"></i>
+                    <p>Aucun fichier traité pour le moment</p>
+                </div></td></tr>`;
+                return;
+            }
+
             files.forEach(file => {
                 const row = document.createElement('tr');
 
-                // Badge de statut
-                let statusBadge = '';
-                if (file.processing_status === 'success') {
-                    statusBadge = '<span class="badge bg-success">Succès</span>';
-                } else if (file.processing_status === 'error') {
-                    statusBadge = '<span class="badge bg-danger">Erreur</span>';
-                } else {
-                    statusBadge = '<span class="badge bg-warning">En cours</span>';
-                }
+                const ext = (file.file_extension || '').toLowerCase();
 
-                // Calcul du changement de lignes
-                const rowsChange = file.initial_rows - file.final_rows;
-                const rowsChangeText = rowsChange > 0
-                    ? `<span class="text-danger">-${rowsChange}</span>`
-                    : `<span class="text-success">+${Math.abs(rowsChange)}</span>`;
+                const statusBadge = file.processing_status === 'success'
+                    ? '<span class="badge-ok">Succès</span>'
+                    : file.processing_status === 'error'
+                        ? '<span class="badge-err">Erreur</span>'
+                        : '<span class="badge-pend">En cours</span>';
+
+                const delta = file.initial_rows - file.final_rows;
+                const deltaHtml = delta > 0
+                    ? `<span class="delta-neg">▼ ${delta}</span>`
+                    : delta < 0
+                        ? `<span class="delta-pos">▲ ${Math.abs(delta)}</span>`
+                        : '';
+
+                const downloadBtn = file.output_filename
+                    ? `<a href="/download/${file.output_filename}" class="icon-btn download" title="Télécharger"><i class="fas fa-download"></i></a>`
+                    : `<span class="icon-btn disabled" title="Pas de fichier disponible"><i class="fas fa-download"></i></span>`;
 
                 row.innerHTML = `
                     <td>
-                        <i class="fas fa-file-${file.file_extension} text-primary"></i>
-                        <strong>${file.original_filename}</strong>
+                        <span class="file-ext">${ext}</span>
+                        <span class="file-name">${file.original_filename}</span>
                     </td>
-                    <td>${new Date(file.upload_date).toLocaleString('fr-FR')}</td>
-                    <td>
-                        ${file.initial_rows.toLocaleString()} → ${file.final_rows.toLocaleString()}
-                        ${rowsChangeText}
+                    <td style="color:var(--text-muted);white-space:nowrap;font-size:0.8rem;">
+                        ${new Date(file.upload_date).toLocaleString('fr-FR')}
                     </td>
                     <td>
-                        <span class="badge bg-info">${file.treatments_count} traitements</span>
+                        <div class="rows-info">
+                            <strong>${file.initial_rows.toLocaleString()}</strong>
+                            <span style="color:var(--text-muted)"> → </span>
+                            <strong>${file.final_rows.toLocaleString()}</strong>
+                        </div>
+                        ${deltaHtml}
                     </td>
+                    <td><span class="badge-treatment">${file.treatments_count} traitements</span></td>
                     <td>${statusBadge}</td>
                     <td>
-                        <a href="/dashboard/${file.id}" class="btn btn-sm btn-view me-2">
-                            <i class="fas fa-eye"></i> Voir
-                        </a>
-                        ${file.output_filename ? `
-                            <a href="/download/${file.output_filename}" class="btn btn-sm btn-success">
-                                <i class="fas fa-download"></i>
+                        <div class="actions-cell">
+                            <a href="/dashboard/${file.id}" class="icon-btn" title="Voir les détails">
+                                <i class="fas fa-eye"></i>
                             </a>
-                        ` : ''}
+                            ${downloadBtn}
+                        </div>
                     </td>
                 `;
 
                 tbody.appendChild(row);
             });
         }
-    </script>
-
+</script>
 {% endblock %}

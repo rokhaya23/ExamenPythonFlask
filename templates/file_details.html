@@ -3,467 +3,601 @@
 {% block title %}Détails du fichier{% endblock %}
 
 {% block content %}
-    <style>
-        .detail-container {
-            padding: 2rem;
-        }
+<style>
+    :root {
+        --primary: #4f46e5;
+        --primary-light: #eef2ff;
+        --success: #10b981;
+        --success-light: #d1fae5;
+        --danger: #ef4444;
+        --danger-light: #fee2e2;
+        --warning: #f59e0b;
+        --warning-light: #fef3c7;
+        --info: #3b82f6;
+        --info-light: #dbeafe;
+        --text-main: #111827;
+        --text-muted: #6b7280;
+        --border: #e5e7eb;
+        --surface: #ffffff;
+        --bg: #f9fafb;
+    }
 
-        .detail-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-        }
-        .column-badge {
-            margin-right: 10px;   /* espace horizontal */
-            margin-bottom: 6px;   /* retour à la ligne propre */
-            display: inline-block;
-        }
+    .detail-wrapper {
+        padding: 2rem 2.5rem;
+        background: var(--bg);
+        min-height: 100vh;
+    }
 
-        .stat-box {
-            background: #f8f9fa;
-            border-radius: 10px;
-            padding: 1rem;
-            margin-bottom: 1rem;
-        }
+    .back-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        color: var(--text-muted);
+        font-size: 0.825rem;
+        text-decoration: none;
+        margin-bottom: 1.25rem;
+        font-weight: 500;
+        transition: color 0.15s;
+    }
+    .back-link:hover { color: var(--primary); }
 
-        .treatment-card {
-            background: white;
-            border-left: 4px solid #4f46e5;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
+    .d-card {
+        background: var(--surface);
+        border-radius: 12px;
+        border: 1px solid var(--border);
+        margin-bottom: 1.25rem;
+        overflow: hidden;
+    }
+    .d-card-header {
+        padding: 1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .d-card-header h2 {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .d-card-body { padding: 1.25rem 1.5rem; }
 
-        .treatment-success {
-            border-left-color: #10b981;
-        }
+    .info-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 1rem;
+    }
+    .info-item {
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 0.875rem 1rem;
+    }
+    .info-item .label {
+        font-size: 0.72rem;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: var(--text-muted);
+        margin-bottom: 0.35rem;
+    }
+    .info-item .value {
+        font-size: 0.925rem;
+        font-weight: 700;
+        color: var(--text-main);
+    }
+    .info-item .value .arrow { color: var(--text-muted); font-weight: 400; }
 
-        .treatment-error {
-            border-left-color: #ef4444;
-        }
+    .struct-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.3rem 0.8rem;
+        border-radius: 20px;
+        font-size: 0.78rem;
+        font-weight: 600;
+    }
+    .struct-structured     { background: var(--success-light); color: #065f46; }
+    .struct-semistructured { background: #ede9fe; color: #5b21b6; }
 
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
+    .btn-download {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--success);
+        color: #fff;
+        border: none;
+        border-radius: 8px;
+        padding: 0.45rem 1rem;
+        font-size: 0.825rem;
+        font-weight: 600;
+        text-decoration: none;
+        transition: background 0.2s;
+    }
+    .btn-download:hover { background: #059669; color: #fff; }
 
-        .badge-custom {
-            padding: 0.5rem 1rem;
-            border-radius: 20px;
-            font-weight: 600;
-        }
-    </style>
+    .kpi-row {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 1rem;
+    }
+    .kpi-item {
+        background: var(--bg);
+        border-radius: 10px;
+        padding: 1rem;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+    }
+    .kpi-icon {
+        width: 36px; height: 36px;
+        border-radius: 8px;
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.9rem; flex-shrink: 0;
+    }
+    .kpi-icon.indigo { background: var(--primary-light); color: var(--primary); }
+    .kpi-icon.red    { background: var(--danger-light);  color: var(--danger); }
+    .kpi-icon.green  { background: var(--success-light); color: var(--success); }
+    .kpi-text p      { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin: 0; text-transform: uppercase; letter-spacing: 0.04em; }
+    .kpi-text strong { font-size: 1.15rem; color: var(--text-main); font-weight: 700; }
 
-    <div class="detail-container">
-        <!-- Header avec retour -->
-        <div class="mb-4">
-            <a href="/dashboard" class="btn btn-outline-primary mb-3">
-                <i class="fas fa-arrow-left"></i> Retour au dashboard
-            </a>
-        </div>
+    /* Treatment cards */
+    .treatment-card {
+        border: 1px solid var(--border);
+        border-left: 4px solid var(--primary);
+        border-radius: 10px;
+        margin-bottom: 0.875rem;
+        overflow: hidden;
+    }
+    .treatment-card.treatment-success { border-left-color: var(--success); }
+    .treatment-card.treatment-warning { border-left-color: var(--warning); }
+    .treatment-card.treatment-error   { border-left-color: var(--danger); }
 
-        <!-- Informations du fichier -->
-        <div class="detail-card">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h2><i class="fas fa-file-alt"></i> <span id="fileName">Chargement...</span></h2>
-                <a id="downloadBtn" href="#" class="btn btn-success" style="display: none;">
+    .treatment-header {
+        padding: 0.875rem 1.25rem;
+        background: var(--bg);
+        border-bottom: 1px solid var(--border);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .treatment-header h4 {
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: var(--text-main);
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+    .treatment-body { padding: 1.1rem 1.25rem; }
+
+    /* Stats rows */
+    .stat-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.5rem 0;
+        border-bottom: 1px solid var(--border);
+        font-size: 0.85rem;
+    }
+    .stat-item:last-child { border-bottom: none; }
+    .stat-label { color: var(--text-muted); }
+    .stat-value { font-weight: 600; color: var(--text-main); font-size: 0.9rem; }
+
+    .stats-visual h5 {
+        font-size: 0.8rem; font-weight: 700;
+        text-transform: uppercase; letter-spacing: 0.04em;
+        color: var(--text-muted); margin: 0.75rem 0 0.5rem;
+    }
+    .stats-visual h6 {
+        font-size: 0.8rem; font-weight: 600;
+        color: var(--text-muted); margin: 0.75rem 0 0.4rem;
+    }
+
+    .column-badge {
+        display: inline-block;
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 20px;
+        padding: 0.2rem 0.65rem;
+        font-size: 0.75rem;
+        margin: 0.2rem;
+        color: var(--text-main);
+    }
+
+    /* Override Bootstrap alerts to match design */
+    .alert { border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.85rem; border: none; }
+    .alert-success { background: var(--success-light); color: #065f46; }
+    .alert-info    { background: var(--info-light);    color: #1e40af; }
+
+    /* Slim down Bootstrap badges */
+    .badge { border-radius: 20px; padding: 0.25rem 0.65rem; font-size: 0.72rem; font-weight: 600; }
+    .bg-success { background-color: var(--success-light) !important; color: #065f46 !important; }
+    .bg-danger  { background-color: var(--danger-light)  !important; color: #991b1b !important; }
+    .bg-warning { background-color: var(--warning-light) !important; color: #92400e !important; }
+    .bg-info    { background-color: var(--info-light)    !important; color: #1e40af !important; }
+
+    .card { border: 1px solid var(--border); border-radius: 8px; margin-bottom: 0.5rem; }
+    .card-body { padding: 0.75rem 1rem; font-size: 0.825rem; }
+
+    .comparison-table { width: 100%; font-size: 0.825rem; border-collapse: collapse; }
+    .comparison-table th, .comparison-table td { padding: 0.5rem 0.75rem; border: 1px solid var(--border); }
+    .comparison-table thead { background: var(--bg); font-size: 0.75rem; }
+</style>
+
+<div class="detail-wrapper">
+
+    <a href="/dashboard" class="back-link"><i class="fas fa-arrow-left"></i> Retour au dashboard</a>
+
+    <!-- Informations du fichier -->
+    <div class="d-card">
+        <div class="d-card-header">
+            <h2>
+                <i class="fas fa-file-alt" style="color:var(--primary);"></i>
+                <span id="fileName">Chargement...</span>
+            </h2>
+            <div style="display:flex;align-items:center;gap:.75rem;">
+                <span id="structBadge"></span>
+                <a id="downloadBtn" href="#" class="btn-download" style="display:none;">
                     <i class="fas fa-download"></i> Télécharger le fichier nettoyé
                 </a>
             </div>
-
-            <div class="row">
-                <div class="col-md-3">
-                    <div class="stat-box text-center">
-                        <i class="fas fa-calendar text-primary"></i>
-                        <h6 class="text-muted mt-2">Date de traitement</h6>
-                        <strong id="uploadDate">-</strong>
+        </div>
+        <div class="d-card-body">
+            <div class="info-grid">
+                <div class="info-item">
+                    <div class="label"><i class="fas fa-calendar"></i> Date de traitement</div>
+                    <div class="value" id="uploadDate">-</div>
+                </div>
+                <div class="info-item">
+                    <div class="label"><i class="fas fa-database"></i> Lignes</div>
+                    <div class="value">
+                        <span id="initialRows">0</span>
+                        <span class="arrow"> → </span>
+                        <span id="finalRows">0</span>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="stat-box text-center">
-                        <i class="fas fa-database text-info"></i>
-                        <h6 class="text-muted mt-2">Lignes</h6>
-                        <strong><span id="initialRows">0</span> → <span id="finalRows">0</span></strong>
+                <div class="info-item">
+                    <div class="label"><i class="fas fa-columns"></i> Colonnes</div>
+                    <div class="value">
+                        <span id="initialCols">0</span>
+                        <span class="arrow"> → </span>
+                        <span id="finalCols">0</span>
                     </div>
                 </div>
-                <div class="col-md-3">
-                    <div class="stat-box text-center">
-                        <i class="fas fa-columns text-warning"></i>
-                        <h6 class="text-muted mt-2">Colonnes</h6>
-                        <strong><span id="initialCols">0</span> → <span id="finalCols">0</span></strong>
-                    </div>
-                </div>
-                <div class="col-md-3">
-                    <div class="stat-box text-center">
-                        <i class="fas fa-file text-success"></i>
-                        <h6 class="text-muted mt-2">Taille</h6>
-                        <strong id="fileSize">-</strong>
-                    </div>
+                <div class="info-item">
+                    <div class="label"><i class="fas fa-file"></i> Taille</div>
+                    <div class="value" id="fileSize">-</div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Résumé des traitements -->
-        <div class="detail-card">
-            <h3><i class="fas fa-chart-pie"></i> Résumé</h3>
-            <div class="stats-grid">
-                <div class="stat-box">
-                    <i class="fas fa-tools text-primary"></i>
-                    <h6 class="text-muted">Traitements appliqués</h6>
-                    <h4 id="totalTreatments">0</h4>
+    <!-- Résumé -->
+    <div class="d-card">
+        <div class="d-card-header">
+            <h2><i class="fas fa-chart-pie" style="color:var(--primary);"></i> Résumé</h2>
+        </div>
+        <div class="d-card-body">
+            <div class="kpi-row">
+                <div class="kpi-item">
+                    <div class="kpi-icon indigo"><i class="fas fa-tools"></i></div>
+                    <div class="kpi-text"><p>Traitements appliqués</p><strong id="totalTreatments">0</strong></div>
                 </div>
-                <div class="stat-box">
-                    <i class="fas fa-trash text-danger"></i>
-                    <h6 class="text-muted">Lignes supprimées</h6>
-                    <h4 id="rowsRemoved">0</h4>
+                <div class="kpi-item">
+                    <div class="kpi-icon red"><i class="fas fa-trash"></i></div>
+                    <div class="kpi-text"><p>Lignes supprimées</p><strong id="rowsRemoved">0</strong></div>
                 </div>
-                <div class="stat-box">
-                    <i class="fas fa-percentage text-success"></i>
-                    <h6 class="text-muted">Taux de réussite</h6>
-                    <h4 id="successRate">0%</h4>
+                <div class="kpi-item">
+                    <div class="kpi-icon green"><i class="fas fa-percentage"></i></div>
+                    <div class="kpi-text"><p>Taux de réussite</p><strong id="successRate">0%</strong></div>
                 </div>
             </div>
         </div>
+    </div>
 
-        <!-- Détails des traitements -->
-        <div class="detail-card">
-            <h3><i class="fas fa-list-check"></i> Détails des traitements</h3>
+    <!-- Détails des traitements -->
+    <div class="d-card">
+        <div class="d-card-header">
+            <h2><i class="fas fa-list-check" style="color:var(--primary);"></i> Détails des traitements</h2>
+        </div>
+        <div class="d-card-body">
             <div id="treatmentsList">
                 <!-- Rempli par JavaScript -->
             </div>
         </div>
     </div>
 
-    <script>
-        const fileId = {{ file_id }};
+</div>
 
-        document.addEventListener('DOMContentLoaded', function() {
-            loadFileDetails();
-        });
+<script>
+    const fileId = {{ file_id }};
 
-        async function loadFileDetails() {
-            try {
-                const response = await fetch(`/api/file/${fileId}`);
-                const data = await response.json();
+    document.addEventListener('DOMContentLoaded', function() {
+        loadFileDetails();
+    });
 
-                if (data.error) {
-                    alert('Fichier non trouvé');
-                    window.location.href = '/dashboard';
-                    return;
-                }
+    async function loadFileDetails() {
+        try {
+            const response = await fetch(`/api/file/${fileId}`);
+            const data = await response.json();
 
-                displayFileInfo(data.file_info);
-                displaySummary(data.summary);
-                displayTreatments(data.treatments);
-
-            } catch (error) {
-                console.error('Erreur chargement:', error);
-                alert('Erreur lors du chargement des détails');
-            }
-        }
-
-        function displayFileInfo(info) {
-            document.getElementById('fileName').textContent = info.original_filename;
-            document.getElementById('uploadDate').textContent = new Date(info.upload_date).toLocaleString('fr-FR');
-            document.getElementById('initialRows').textContent = info.initial_rows.toLocaleString();
-            document.getElementById('finalRows').textContent = info.final_rows.toLocaleString();
-            document.getElementById('initialCols').textContent = info.initial_columns;
-            document.getElementById('finalCols').textContent = info.final_columns;
-            document.getElementById('fileSize').textContent = formatBytes(info.file_size);
-
-            // Bouton téléchargement
-            if (info.output_filename) {
-                const downloadBtn = document.getElementById('downloadBtn');
-                downloadBtn.href = `/download/${info.output_filename}`;
-                downloadBtn.style.display = 'inline-block';
-            }
-        }
-
-        function displaySummary(summary) {
-            document.getElementById('totalTreatments').textContent = summary.total_treatments;
-            document.getElementById('rowsRemoved').textContent = summary.rows_removed.toLocaleString();
-            document.getElementById('successRate').textContent = summary.success_rate.toFixed(1) + '%';
-        }
-
-        function displayTreatments(treatments) {
-            const container = document.getElementById('treatmentsList');
-            container.innerHTML = '';
-
-            if (treatments.length === 0) {
-                container.innerHTML = '<p class="text-muted">Aucun traitement appliqué</p>';
+            if (data.error) {
+                alert('Fichier non trouvé');
+                window.location.href = '/dashboard';
                 return;
             }
 
-            treatments.forEach((treatment, index) => {
-                const card = document.createElement('div');
-                card.className = `treatment-card ${treatment.success ? 'treatment-success' : 'treatment-warning'}`;
+            displayFileInfo(data.file_info);
+            displaySummary(data.summary);
+            displayTreatments(data.treatments);
 
-                const statsHtml = renderTreatmentStats(treatment.treatment_type, treatment.stats);
+        } catch (error) {
+            console.error('Erreur chargement:', error);
+            alert('Erreur lors du chargement des détails');
+        }
+    }
 
-                card.innerHTML = `
-                    <div class="d-flex justify-content-between align-items-start mb-3">
-                        <div>
-                            <h4>
-                                <i class="fas fa-${getTreatmentIcon(treatment.treatment_type)} me-2"></i>
-                                ${treatment.treatment_type}
-                            </h4>
-                            <span class="badge bg-${treatment.success ? 'success' : 'danger'} badge-pill">
-                                ${treatment.success ? '✓ Succès' : '✗ Échec'}
-                            </span>
-                        </div>
-                    </div>
+    function displayFileInfo(info) {
+        document.getElementById('fileName').textContent = info.original_filename;
+        document.getElementById('uploadDate').textContent = new Date(info.upload_date).toLocaleString('fr-FR');
+        document.getElementById('initialRows').textContent = info.initial_rows.toLocaleString();
+        document.getElementById('finalRows').textContent = info.final_rows.toLocaleString();
+        document.getElementById('initialCols').textContent = info.initial_columns;
+        document.getElementById('finalCols').textContent = info.final_columns;
+        document.getElementById('fileSize').textContent = formatBytes(info.file_size);
+
+        // Badge structure de données
+        const colsAdded = (info.final_columns || 0) - (info.initial_columns || 0);
+        const structBadge = document.getElementById('structBadge');
+        if (colsAdded > 0) {
+            structBadge.innerHTML = `<span class="struct-badge struct-semistructured"><i class="fas fa-code-branch"></i> Semi-structuré → Structuré</span>`;
+        } else {
+            structBadge.innerHTML = `<span class="struct-badge struct-structured"><i class="fas fa-table"></i> Structuré</span>`;
+        }
+
+        // Bouton téléchargement
+        if (info.output_filename) {
+            const downloadBtn = document.getElementById('downloadBtn');
+            downloadBtn.href = `/download/${info.output_filename}`;
+            downloadBtn.style.display = 'inline-flex';
+        }
+    }
+
+    function displaySummary(summary) {
+        document.getElementById('totalTreatments').textContent = summary.total_treatments;
+        document.getElementById('rowsRemoved').textContent = summary.rows_removed.toLocaleString();
+        document.getElementById('successRate').textContent = summary.success_rate.toFixed(1) + '%';
+    }
+
+    function displayTreatments(treatments) {
+        const container = document.getElementById('treatmentsList');
+        container.innerHTML = '';
+
+        if (treatments.length === 0) {
+            container.innerHTML = '<p class="text-muted">Aucun traitement appliqué</p>';
+            return;
+        }
+
+        treatments.forEach((treatment, index) => {
+            const card = document.createElement('div');
+            card.className = `treatment-card ${treatment.success ? 'treatment-success' : 'treatment-warning'}`;
+
+            const statsHtml = renderTreatmentStats(treatment.treatment_type, treatment.stats);
+
+            card.innerHTML = `
+                <div class="treatment-header">
+                    <h4>
+                        <i class="fas fa-${getTreatmentIcon(treatment.treatment_type)}" style="color:var(--primary);"></i>
+                        ${treatment.treatment_type}
+                    </h4>
+                    <span class="badge bg-${treatment.success ? 'success' : 'danger'}">
+                        ${treatment.success ? '✓ Succès' : '✗ Échec'}
+                    </span>
+                </div>
+                <div class="treatment-body">
                     ${statsHtml}
-                `;
+                </div>
+            `;
 
-                container.appendChild(card);
-            });
+            container.appendChild(card);
+        });
+    }
+
+    function getTreatmentIcon(type) {
+        const icons = {
+            'Valeurs manquantes': 'fill-drip',
+            'Valeurs aberrantes': 'exclamation-triangle',
+            'Doublons': 'clone',
+            'Normalisation': 'chart-line'
+        };
+        return icons[type] || 'cog';
+    }
+
+    function renderTreatmentStats(type, stats) {
+        if (!stats || Object.keys(stats).length === 0) {
+            return '<p class="text-muted">Aucune statistique disponible</p>';
         }
 
-        function getTreatmentIcon(type) {
-            const icons = {
-                'Valeurs manquantes': 'fill-drip',
-                'Valeurs aberrantes': 'exclamation-triangle',
-                'Doublons': 'clone',
-                'Normalisation': 'chart-line'
-            };
-            return icons[type] || 'cog';
-        }
+        let html = '<div class="stats-visual">';
 
-        function renderTreatmentStats(type, stats) {
-            if (!stats || Object.keys(stats).length === 0) {
-                return '<p class="text-muted">Aucune statistique disponible</p>';
-            }
+        // ═══ VALEURS MANQUANTES ═══
+        if (type === 'Valeurs manquantes') {
+            html += '<h5><i class="fas fa-info-circle"></i> Résultat</h5>';
 
-            let html = '<div class="stats-visual">';
-
-            // ═══ VALEURS MANQUANTES ═══
-            if (type === 'Valeurs manquantes') {
-                html += '<h5><i class="fas fa-info-circle"></i> Résultat</h5>';
-
-                if (stats.missing_count === 0) {
-                    html += `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            <strong>Aucune valeur manquante détectée</strong>
-                            <br>Votre fichier est complet avec ${stats.initial_rows.toLocaleString()} lignes.
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="stat-item">
-                            <span class="stat-label">Action effectuée</span>
-                            <span class="stat-value">${stats.action}</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Valeurs manquantes trouvées</span>
-                            <span class="stat-value text-warning">${stats.missing_count} (${stats.pourcentage}%)</span>
-                        </div>
-                    `;
-
-                    if (stats.imputation_details && stats.imputation_details.length > 0) {
-                        html += '<h6 class="mt-3">Détails par colonne :</h6>';
-                        stats.imputation_details.forEach(detail => {
-                            html += `
-                                <div class="stat-item">
-                                    <span class="stat-label">
-                                        <i class="fas fa-columns"></i> ${detail.column}
-                                    </span>
-                                    <span class="badge bg-info">${detail.methode}</span>
-                                </div>
-                            `;
-                        });
-                    }
-                }
-            }
-
-            // ═══ VALEURS ABERRANTES ═══
-            else if (type === 'Valeurs aberrantes') {
-                html += '<h5><i class="fas fa-chart-bar"></i> Résumé</h5>';
+            if (stats.missing_count === 0) {
                 html += `
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="stat-item">
-                                <span class="stat-label">Lignes initiales</span>
-                                <span class="stat-value">${stats.initial_count.toLocaleString()}</span>
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <div class="stat-item">
-                                <span class="stat-label">Lignes finales</span>
-                                <span class="stat-value text-success">${stats.final_count.toLocaleString()}</span>
-                            </div>
-                        </div>
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Aucune valeur manquante détectée</strong>
+                        <br>Votre fichier est complet avec ${stats.initial_rows.toLocaleString()} lignes.
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="stat-item">
+                        <span class="stat-label">Action effectuée</span>
+                        <span class="stat-value">${stats.action}</span>
                     </div>
                     <div class="stat-item">
-                        <span class="stat-label">Lignes supprimées</span>
-                        <span class="stat-value text-danger">${stats.rows_removed}</span>
+                        <span class="stat-label">Valeurs manquantes trouvées</span>
+                        <span class="stat-value text-warning">${stats.missing_count} (${stats.pourcentage}%)</span>
                     </div>
                 `;
 
-                if (stats.outliers_details && stats.outliers_details.length > 0) {
-                    html += '<h6 class="mt-4">Détails par colonne :</h6>';
-
-                    stats.outliers_details.forEach(detail => {
-                        const hasOutliers = detail.n_outliers > 0;
-
+                if (stats.imputation_details && stats.imputation_details.length > 0) {
+                    html += '<h6 class="mt-3">Détails par colonne :</h6>';
+                    stats.imputation_details.forEach(detail => {
                         html += `
-                            <div class="card mb-2">
-                                <div class="card-body">
-                                    <div class="d-flex justify-content-between align-items-center">
-                                        <h6 class="mb-0">
-                                            <i class="fas fa-columns"></i> ${detail.column}
-                                        </h6>
-                                        <span class="badge bg-${hasOutliers ? 'warning' : 'success'}">
-                                            ${hasOutliers ? detail.n_outliers + ' outliers' : 'Aucun outlier'}
-                                        </span>
-                                    </div>
-                                    ${hasOutliers ? `
-                                        <div class="mt-2">
-                                            <small class="text-muted">
-                                                Action : <strong>${detail.action}</strong>
-                                                ${detail.outlier_values ? `<br>Exemples : ${detail.outlier_values.slice(0, 3).join(', ')}` : ''}
-                                            </small>
-                                        </div>
-                                    ` : ''}
+                            <div class="stat-item">
+                                <span class="stat-label">
+                                    <i class="fas fa-columns"></i> ${detail.column}
+                                </span>
+                                <span class="badge bg-info">${detail.methode}</span>
+                            </div>
+                        `;
+                    });
+                }
+            }
+        }
+
+        // ═══ VALEURS ABERRANTES ═══
+        else if (type === 'Valeurs aberrantes') {
+            html += '<h5><i class="fas fa-chart-bar"></i> Résumé</h5>';
+            html += `
+                <div class="stat-item">
+                    <span class="stat-label">Lignes initiales</span>
+                    <span class="stat-value">${stats.initial_count.toLocaleString()}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Lignes finales</span>
+                    <span class="stat-value text-success">${stats.final_count.toLocaleString()}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Lignes supprimées</span>
+                    <span class="stat-value text-danger">${stats.rows_removed}</span>
+                </div>
+            `;
+
+            if (stats.outliers_details && stats.outliers_details.length > 0) {
+                html += '<h6 class="mt-3">Détails par colonne :</h6>';
+                stats.outliers_details.forEach(detail => {
+                    const hasOutliers = detail.n_outliers > 0;
+                    html += `
+                        <div class="card mb-2">
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <h6 class="mb-0"><i class="fas fa-columns"></i> ${detail.column}</h6>
+                                    <span class="badge bg-${hasOutliers ? 'warning' : 'success'}">
+                                        ${hasOutliers ? detail.n_outliers + ' outliers' : 'Aucun outlier'}
+                                    </span>
                                 </div>
-                            </div>
-                        `;
-                    });
-                }
-            }
-
-            // ═══ DOUBLONS ═══
-            else if (type === 'Doublons') {
-                if (stats.df_removed === 0) {
-                    html += `
-                        <div class="alert alert-success">
-                            <i class="fas fa-check-circle"></i>
-                            <strong>Aucun doublon détecté</strong>
-                            <br>Toutes vos ${stats.initial_rows.toLocaleString()} lignes sont uniques.
-                        </div>
-                    `;
-                } else {
-                    html += `
-                        <div class="stat-item">
-                            <span class="stat-label">Doublons supprimés</span>
-                            <span class="stat-value text-danger">${stats.df_removed} (${stats.pourcentage}%)</span>
-                        </div>
-                        <div class="stat-item">
-                            <span class="stat-label">Lignes conservées</span>
-                            <span class="stat-value text-success">${stats.final_rows.toLocaleString()}</span>
-                        </div>
-                    `;
-                }
-            }
-
-            // ═══ NORMALISATION ═══
-            else if (type === 'Normalisation') {
-                html += `
-                    <div class="alert alert-info mb-3">
-                        <i class="fas fa-info-circle"></i>
-                        <strong>${stats.description}</strong>
-                    </div>
-                `;
-
-                html += `
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <div class="stat-item">
-                                <span class="stat-label">Colonnes normalisées</span>
-                                <span class="stat-value text-success">${stats.n_normalized}</span>
+                                ${hasOutliers ? `
+                                    <div class="mt-2">
+                                        <small class="text-muted">
+                                            Action : <strong>${detail.action}</strong>
+                                            ${detail.outlier_values ? `<br>Exemples : ${detail.outlier_values.slice(0, 3).join(', ')}` : ''}
+                                        </small>
+                                    </div>
+                                ` : ''}
                             </div>
                         </div>
-                        <div class="col-md-6">
-                            <div class="stat-item">
-                                <span class="stat-label">Colonnes exclues</span>
-                                <span class="stat-value text-muted">${stats.n_excluded}</span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-
-                if (stats.normalized_columns && stats.normalized_columns.length > 0) {
-                    html += '<h6><i class="fas fa-check"></i> Colonnes normalisées :</h6>';
-                    html += '<div class="column-list">';
-                    stats.normalized_columns.forEach(col => {
-                        html += `<span class="column-badge">${col}</span>`;
-                    });
-                    html += '</div>';
-                }
-
-                if (stats.excluded_columns && stats.excluded_columns.length > 0) {
-                    html += '<h6 class="mt-3"><i class="fas fa-ban"></i> Colonnes exclues (ID) :</h6>';
-                    html += '<div class="column-list">';
-                    stats.excluded_columns.forEach(col => {
-                        html += `<span class="column-badge" style="background: #fee2e2; color: #991b1b;">${col}</span>`;
-                    });
-                    html += '</div>';
-                }
-
-                // Tableau comparatif avant/après
-                if (stats.stats_before && stats.stats_after) {
-                    html += '<h6 class="mt-4"><i class="fas fa-exchange-alt"></i> Transformation des données :</h6>';
-                    html += '<table class="comparison-table table table-striped">';
-                    html += `
-                        <thead>
-                            <tr>
-                                <th>Colonne</th>
-                                <th>Avant</th>
-                                <th></th>
-                                <th>Après</th>
-                            </tr>
-                        </thead>
-                        <tbody>
                     `;
-
-                    Object.keys(stats.stats_before).forEach(col => {
-                        const before = stats.stats_before[col];
-                        const after = stats.stats_after[col];
-
-                        html += `
-                            <tr>
-                                <td><strong>${col}</strong></td>
-                                <td>
-                                    <small>
-                                        Min: ${before.min.toFixed(2)}<br>
-                                        Max: ${before.max.toFixed(2)}<br>
-                                        Moyenne: ${before.mean.toFixed(2)}
-                                    </small>
-                                </td>
-                                <td class="text-center">
-                                    <i class="fas fa-arrow-right arrow-change text-primary"></i>
-                                </td>
-                                <td>
-                                    <small>
-                                        Min: ${after.min.toFixed(2)}<br>
-                                        Max: ${after.max.toFixed(2)}<br>
-                                        Moyenne: ${after.mean.toFixed(2)}
-                                    </small>
-                                </td>
-                            </tr>
-                        `;
-                    });
-
-                    html += '</tbody></table>';
-                }
+                });
             }
-
-            html += '</div>';
-            return html;
         }
 
-        function formatBytes(bytes) {
-            if (bytes === 0) return '0 Bytes';
-            const k = 1024;
-            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-            const i = Math.floor(Math.log(bytes) / Math.log(k));
-            return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+        // ═══ DOUBLONS ═══
+        else if (type === 'Doublons') {
+            if (stats.df_removed === 0) {
+                html += `
+                    <div class="alert alert-success">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Aucun doublon détecté</strong>
+                        <br>Toutes vos ${stats.initial_rows.toLocaleString()} lignes sont uniques.
+                    </div>
+                `;
+            } else {
+                html += `
+                    <div class="stat-item">
+                        <span class="stat-label">Doublons supprimés</span>
+                        <span class="stat-value text-danger">${stats.df_removed} (${stats.pourcentage}%)</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-label">Lignes conservées</span>
+                        <span class="stat-value text-success">${stats.final_rows.toLocaleString()}</span>
+                    </div>
+                `;
+            }
         }
-    </script>
+
+        // ═══ NORMALISATION ═══
+        else if (type === 'Normalisation') {
+            html += `
+                <div class="alert alert-info mb-3">
+                    <i class="fas fa-info-circle"></i>
+                    <strong>${stats.description}</strong>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Colonnes normalisées</span>
+                    <span class="stat-value text-success">${stats.n_normalized}</span>
+                </div>
+                <div class="stat-item">
+                    <span class="stat-label">Colonnes exclues</span>
+                    <span class="stat-value text-muted">${stats.n_excluded}</span>
+                </div>
+            `;
+
+            if (stats.normalized_columns && stats.normalized_columns.length > 0) {
+                html += '<h6><i class="fas fa-check"></i> Colonnes normalisées :</h6><div class="column-list">';
+                stats.normalized_columns.forEach(col => {
+                    html += `<span class="column-badge">${col}</span>`;
+                });
+                html += '</div>';
+            }
+
+            if (stats.excluded_columns && stats.excluded_columns.length > 0) {
+                html += '<h6 class="mt-3"><i class="fas fa-ban"></i> Colonnes exclues (ID) :</h6><div class="column-list">';
+                stats.excluded_columns.forEach(col => {
+                    html += `<span class="column-badge" style="background:#fee2e2;color:#991b1b;">${col}</span>`;
+                });
+                html += '</div>';
+            }
+
+            if (stats.stats_before && stats.stats_after) {
+                html += '<h6 class="mt-4"><i class="fas fa-exchange-alt"></i> Transformation des données :</h6>';
+                html += '<table class="comparison-table table table-striped"><thead><tr><th>Colonne</th><th>Avant</th><th></th><th>Après</th></tr></thead><tbody>';
+                Object.keys(stats.stats_before).forEach(col => {
+                    const before = stats.stats_before[col];
+                    const after  = stats.stats_after[col];
+                    html += `
+                        <tr>
+                            <td><strong>${col}</strong></td>
+                            <td><small>Min: ${before.min.toFixed(2)}<br>Max: ${before.max.toFixed(2)}<br>Moyenne: ${before.mean.toFixed(2)}</small></td>
+                            <td class="text-center"><i class="fas fa-arrow-right text-primary"></i></td>
+                            <td><small>Min: ${after.min.toFixed(2)}<br>Max: ${after.max.toFixed(2)}<br>Moyenne: ${after.mean.toFixed(2)}</small></td>
+                        </tr>
+                    `;
+                });
+                html += '</tbody></table>';
+            }
+        }
+
+        html += '</div>';
+        return html;
+    }
+
+    function formatBytes(bytes) {
+        if (bytes === 0) return '0 Bytes';
+        const k = 1024;
+        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+        const i = Math.floor(Math.log(bytes) / Math.log(k));
+        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
+    }
+</script>
 
 {% endblock %}

@@ -1,4 +1,7 @@
+import json
+
 import pandas as pd
+import xmltodict
 
 
 #verification extension fichier
@@ -19,7 +22,21 @@ def load_file(filepath):
     elif ext == 'json':
         df = pd.read_json(filepath)
     elif ext == 'xml':
-        df = pd.read_xml(filepath)
+        try:
+            # Essayer pandas d'abord (rapide pour XML simples)
+            df = pd.read_xml(filepath)
+
+            # Vérifier si des colonnes sont entièrement NaN
+            nan_cols = [col for col in df.columns if df[col].isna().all()]
+
+            if len(nan_cols) > 0:
+                # Structure imbriquée détectée, utiliser xmltodict
+                print(f"   ⚠️ Structure XML imbriquée détectée ({len(nan_cols)} colonnes vides)")
+                df = load_nested_xml(filepath)
+        except Exception as e:
+            # Si pandas échoue, utiliser directement xmltodict
+            print(f"   ⚠️ Utilisation du parser XML avancé")
+            df = load_nested_xml(filepath)
     else:
         raise ValueError(f"Extension non supportée: {ext}")
 
@@ -29,6 +46,46 @@ def load_file(filepath):
     df_flat, struct_stats = data_structured(df)
 
     return df_flat, struct_stats
+
+
+def load_nested_xml(filepath):
+    """
+    Charge un fichier XML avec structures imbriquées
+    Utilise xmltodict pour parser automatiquement
+    """
+    with open(filepath, 'r', encoding='utf-8') as file:
+        xml_content = file.read()
+
+    # Convertir XML en dictionnaire
+    data_dict = xmltodict.parse(xml_content)
+
+    # Extraire les enregistrements
+    root_key = list(data_dict.keys())[0]
+    root_data = data_dict[root_key]
+
+    if isinstance(root_data, dict):
+        record_key = list(root_data.keys())[0]
+        records = root_data[record_key]
+    else:
+        records = root_data
+
+    if not isinstance(records, list):
+        records = [records]
+
+    # Normaliser en DataFrame (aplatit automatiquement)
+    df = pd.json_normalize(records, sep='_')
+
+    # Convertir les structures complexes en JSON strings
+    for col in df.columns:
+        if df[col].dtype == 'object':
+            sample = df[col].dropna().head(1)
+            if len(sample) > 0 and isinstance(sample.iloc[0], (dict, list)):
+                df[col] = df[col].apply(
+                    lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x
+                )
+
+    return df
+
 
 def data_structured(df):
     df_flat=df.copy()

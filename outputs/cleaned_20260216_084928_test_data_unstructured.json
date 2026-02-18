@@ -1,0 +1,23 @@
+[
+  {
+    "activity":"{'date': '2025-01-01', 'amount': 200}, {'date': '2025-01-05', 'amount': 350}",
+    "user_id":1,
+    "user_name":"Alice",
+    "contact_email":"alice@email.com",
+    "contact_phone":771234567.0
+  },
+  {
+    "activity":"{'date': '2025-01-03', 'amount': -50}",
+    "user_id":2,
+    "user_name":"Bob",
+    "contact_email":"",
+    "contact_phone":771234567.0
+  },
+  {
+    "activity":"",
+    "user_id":3,
+    "user_name":"Charlie",
+    "contact_email":"charlie@email.com",
+    "contact_phone":771234567.0
+  }
+]

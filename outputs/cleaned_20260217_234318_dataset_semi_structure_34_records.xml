@@ -1,0 +1,377 @@
+<?xml version='1.0' encoding='utf-8'?>
+<data>
+  <row>
+    <Client_ID>1</Client_ID>
+    <Age>64</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client1@example.com</Contact_Email>
+    <Contact_Telephone>+221779846143</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "329124", "Type": "Paiement"}, {"Montant": "278880", "Type": "Retrait"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>2</Client_ID>
+    <Age>62</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client2@example.com</Contact_Email>
+    <Contact_Telephone>+221771501503</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>60329</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Paiement</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>3</Client_ID>
+    <Age>59</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Saint-Louis</Profil_Ville>
+    <Contact_Email>client3@example.com</Contact_Email>
+    <Contact_Telephone>+221776103481</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "241641", "Type": "Depot"}, {"Montant": "45796", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>4</Client_ID>
+    <Age>36</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Saint-Louis</Profil_Ville>
+    <Contact_Email>client4@example.com</Contact_Email>
+    <Contact_Telephone>+221774510296</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>484362</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Retrait</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>5</Client_ID>
+    <Age>46</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Kaolack</Profil_Ville>
+    <Contact_Email>client5@example.com</Contact_Email>
+    <Contact_Telephone>+221777687827</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "362492", "Type": "Depot"}, {"Montant": "16659", "Type": "Paiement"}, {"Montant": "234016", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>6</Client_ID>
+    <Age>19</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client6@example.com</Contact_Email>
+    <Contact_Telephone>+221778254700</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "180482", "Type": "Depot"}, {"Montant": "75951", "Type": "Depot"}, {"Montant": "415401", "Type": "Retrait"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>7</Client_ID>
+    <Age>44</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client7@example.com</Contact_Email>
+    <Contact_Telephone>+221772786628</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>488253</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>8</Client_ID>
+    <Age>24</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client8@example.com</Contact_Email>
+    <Contact_Telephone>+221771936294</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "309463", "Type": "Depot"}, {"Montant": "264280", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>9</Client_ID>
+    <Age>54</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Thies</Profil_Ville>
+    <Contact_Email>client9@example.com</Contact_Email>
+    <Contact_Telephone>+221779437502</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>279540</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Paiement</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>10</Client_ID>
+    <Age>58</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client10@example.com</Contact_Email>
+    <Contact_Telephone>+221779417158</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "218677", "Type": "Retrait"}, {"Montant": "348901", "Type": "Depot"}, {"Montant": "21011", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>11</Client_ID>
+    <Age>38</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Thies</Profil_Ville>
+    <Contact_Email>client11@example.com</Contact_Email>
+    <Contact_Telephone>+221773511977</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "292170", "Type": "Retrait"}, {"Montant": "248413", "Type": "Paiement"}, {"Montant": "253141", "Type": "Retrait"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>12</Client_ID>
+    <Age>54</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Saint-Louis</Profil_Ville>
+    <Contact_Email>client12@example.com</Contact_Email>
+    <Contact_Telephone>+221771779619</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>13</Client_ID>
+    <Age>21</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Kaolack</Profil_Ville>
+    <Contact_Email>client13@example.com</Contact_Email>
+    <Contact_Telephone>+221775064619</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "151727", "Type": "Retrait"}, {"Montant": "135707", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>14</Client_ID>
+    <Age>54</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Saint-Louis</Profil_Ville>
+    <Contact_Email>client14@example.com</Contact_Email>
+    <Contact_Telephone>+221777140693</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "371671", "Type": "Depot"}, {"Montant": "74375", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>15</Client_ID>
+    <Age>48</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client15@example.com</Contact_Email>
+    <Contact_Telephone>+221772494676</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "472396", "Type": "Retrait"}, {"Montant": "20174", "Type": "Retrait"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>16</Client_ID>
+    <Age>63</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client16@example.com</Contact_Email>
+    <Contact_Telephone>+221775271976</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "402312", "Type": "Paiement"}, {"Montant": "308314", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>17</Client_ID>
+    <Age>30</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Saint-Louis</Profil_Ville>
+    <Contact_Email>client17@example.com</Contact_Email>
+    <Contact_Telephone>+221773433797</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "178595", "Type": "Depot"}, {"Montant": "23703", "Type": "Depot"}, {"Montant": "291225", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>18</Client_ID>
+    <Age>24</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client18@example.com</Contact_Email>
+    <Contact_Telephone>+221778912746</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "347787", "Type": "Retrait"}, {"Montant": "267900", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>19</Client_ID>
+    <Age>52</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Saint-Louis</Profil_Ville>
+    <Contact_Email>client19@example.com</Contact_Email>
+    <Contact_Telephone>+221778581776</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "129135", "Type": "Retrait"}, {"Montant": "152890", "Type": "Retrait"}, {"Montant": "220656", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>20</Client_ID>
+    <Age>38</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client20@example.com</Contact_Email>
+    <Contact_Telephone>+221772834102</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>495108</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Retrait</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>21</Client_ID>
+    <Age>29</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Thies</Profil_Ville>
+    <Contact_Email>client21@example.com</Contact_Email>
+    <Contact_Telephone>+221772794898</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>82827</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>22</Client_ID>
+    <Age>38</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Saint-Louis</Profil_Ville>
+    <Contact_Email>client22@example.com</Contact_Email>
+    <Contact_Telephone>+221777271371</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "446578", "Type": "Paiement"}, {"Montant": "26173", "Type": "Retrait"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>23</Client_ID>
+    <Age>37</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client23@example.com</Contact_Email>
+    <Contact_Telephone>+221778185058</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>255492</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Paiement</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>24</Client_ID>
+    <Age>44</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Kaolack</Profil_Ville>
+    <Contact_Email>client24@example.com</Contact_Email>
+    <Contact_Telephone>+221773726441</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "282224", "Type": "Depot"}, {"Montant": "106221", "Type": "Depot"}, {"Montant": "238133", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>25</Client_ID>
+    <Age>19</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Kaolack</Profil_Ville>
+    <Contact_Email>client25@example.com</Contact_Email>
+    <Contact_Telephone>+221774478665</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "119416", "Type": "Depot"}, {"Montant": "12050", "Type": "Retrait"}, {"Montant": "94383", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>26</Client_ID>
+    <Age>55</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client26@example.com</Contact_Email>
+    <Contact_Telephone>+221779721707</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "112637", "Type": "Depot"}, {"Montant": "308040", "Type": "Paiement"}, {"Montant": "184520", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>27</Client_ID>
+    <Age>38</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Thies</Profil_Ville>
+    <Contact_Email>client27@example.com</Contact_Email>
+    <Contact_Telephone>+221774207423</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "32965", "Type": "Paiement"}, {"Montant": "389298", "Type": "Retrait"}, {"Montant": "469181", "Type": "Depot"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>28</Client_ID>
+    <Age>22</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Kaolack</Profil_Ville>
+    <Contact_Email>client28@example.com</Contact_Email>
+    <Contact_Telephone>+221779300182</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "58187", "Type": "Depot"}, {"Montant": "328237", "Type": "Depot"}, {"Montant": "233022", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>29</Client_ID>
+    <Age>40</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client29@example.com</Contact_Email>
+    <Contact_Telephone>+221776304486</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>30</Client_ID>
+    <Age>45</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Thies</Profil_Ville>
+    <Contact_Email>client30@example.com</Contact_Email>
+    <Contact_Telephone>+221776668257</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>44417</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>31</Client_ID>
+    <Age>35</Age>
+    <Profil_Statut>Actif</Profil_Statut>
+    <Profil_Ville>Thies</Profil_Ville>
+    <Contact_Email>client31@example.com</Contact_Email>
+    <Contact_Telephone>+221777401880</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "107660", "Type": "Paiement"}, {"Montant": "278658", "Type": "Depot"}, {"Montant": "55764", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>205285</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>32</Client_ID>
+    <Age>21</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Kaolack</Profil_Ville>
+    <Contact_Email>client32@example.com</Contact_Email>
+    <Contact_Telephone>+221777361493</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "332618", "Type": "Depot"}, {"Montant": "166276", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>33</Client_ID>
+    <Age>37</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Dakar</Profil_Ville>
+    <Contact_Email>client33@example.com</Contact_Email>
+    <Contact_Telephone>+221773890775</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "31179", "Type": "Retrait"}, {"Montant": "147201", "Type": "Depot"}, {"Montant": "406535", "Type": "Retrait"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+  <row>
+    <Client_ID>34</Client_ID>
+    <Age>21</Age>
+    <Profil_Statut>Inactif</Profil_Statut>
+    <Profil_Ville>Thies</Profil_Ville>
+    <Contact_Email>client34@example.com</Contact_Email>
+    <Contact_Telephone>+221778385325</Contact_Telephone>
+    <Transactions_Transaction>[{"Montant": "224838", "Type": "Retrait"}, {"Montant": "91451", "Type": "Depot"}, {"Montant": "355233", "Type": "Paiement"}]</Transactions_Transaction>
+    <Transactions_Transaction_Montant>178376</Transactions_Transaction_Montant>
+    <Transactions_Transaction_Type>Depot</Transactions_Transaction_Type>
+  </row>
+</data>

@@ -1,0 +1,63 @@
+[
+    {
+        "user": {
+            "id": 1,
+            "name": "Alice"
+        },
+        "contact": {
+            "email": "alice@email.com",
+            "phone": "771234567"
+        },
+        "activity": [
+            {
+                "date": "2025-01-01",
+                "amount": 200
+            },
+            {
+                "date": "2025-01-05",
+                "amount": 350
+            }
+        ]
+    },
+    {
+        "user": {
+            "id": 2,
+            "name": "Bob"
+        },
+        "contact": {
+            "email": "",
+            "phone": null
+        },
+        "activity": [
+            {
+                "date": "2025-01-03",
+                "amount": -50
+            }
+        ]
+    },
+    {
+        "user": {
+            "id": 3,
+            "name": "Charlie"
+        },
+        "contact": {
+            "email": "charlie@email.com"
+        },
+        "activity": []
+    },
+    {
+        "user": {
+            "id": 3,
+            "name": "Charlie"
+        },
+        "contact": {
+            "email": "charlie@email.com"
+        },
+        "activity": [
+            {
+                "date": "invalid-date",
+                "amount": 5000
+            }
+        ]
+    }
+]

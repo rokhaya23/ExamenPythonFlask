@@ -1,0 +1,43 @@
+[
+    {
+        "user": {
+            "id": 1,
+            "name": "Alice",
+            "dept": "IT"
+        },
+        "salary": 50000,
+        "scores": [
+            0.8,
+            0.9
+        ]
+    },
+    {
+        "user": {
+            "id": 2,
+            "name": "Bob",
+            "dept": "HR"
+        },
+        "salary": -3000,
+        "scores": [
+            0.7
+        ]
+    },
+    {
+        "user": {
+            "id": 3,
+            "name": "Charlie"
+        },
+        "salary": null,
+        "scores": []
+    },
+    {
+        "user": {
+            "id": 3,
+            "name": "Charlie"
+        },
+        "salary": 1000000,
+        "scores": [
+            0.95
+        ]
+    }
+]
