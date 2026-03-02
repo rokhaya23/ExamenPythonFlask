@@ -1,0 +1,7 @@
+<?xml version="1.0"?>
+<company>
+  <employee><id>1</id><name>Alice</name><dept>IT</dept><salary>50000</salary></employee>
+  <employee><id>2</id><name>Bob</name><dept></dept><salary>-3000</salary></employee>
+  <employee><id>3</id><name>Charlie</name><salary>70000</salary></employee>
+  <employee><id>3</id><name>Charlie</name><dept>HR</dept><salary>1000000</salary></employee>
+</company>

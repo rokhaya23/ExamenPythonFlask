@@ -1,0 +1,563 @@
+[
+    {
+        "person": {
+            "id": 1,
+            "name": "Alice",
+            "age": 25.0
+        },
+        "job": {
+            "salary": 50000.0,
+            "city": "Dakar"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 2
+            },
+            {
+                "year": 2025,
+                "score": 3
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 2,
+            "name": "Bob",
+            "age": NaN
+        },
+        "job": {
+            "salary": 60000.0,
+            "city": "Thies"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 3
+            },
+            {
+                "year": 2025,
+                "score": 4
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 3,
+            "name": "Charlie",
+            "age": 35.0
+        },
+        "job": {
+            "salary": 55000.0,
+            "city": "Dakar"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 4,
+            "name": "David",
+            "age": 28.0
+        },
+        "job": {
+            "salary": NaN,
+            "city": "Saint-Louis"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 5
+            },
+            {
+                "year": 2025,
+                "score": 6
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 5,
+            "name": "Eve",
+            "age": 22.0
+        },
+        "job": {
+            "salary": 48000.0,
+            "city": "Kaolack"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 1
+            },
+            {
+                "year": 2025,
+                "score": 7
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 5,
+            "name": "Eve",
+            "age": 22.0
+        },
+        "job": {
+            "salary": 48000.0,
+            "city": "Kaolack"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 1
+            },
+            {
+                "year": 2025,
+                "score": 7
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 6,
+            "name": "Fatou",
+            "age": -5.0
+        },
+        "job": {
+            "salary": 70000.0,
+            "city": "Dakar"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 7,
+            "name": "Ibrahima",
+            "age": 200.0
+        },
+        "job": {
+            "salary": 62000.0,
+            "city": "Thies"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 3
+            },
+            {
+                "year": 2025,
+                "score": 2
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 8,
+            "name": "Awa",
+            "age": 29.0
+        },
+        "job": {
+            "salary": 58000.0,
+            "city": "Mbour"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 4
+            },
+            {
+                "year": 2025,
+                "score": 3
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 9,
+            "name": "Moussa",
+            "age": 31.0
+        },
+        "job": {
+            "salary": 61000.0,
+            "city": "Dakar"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 10,
+            "name": "Khadija",
+            "age": 45.0
+        },
+        "job": {
+            "salary": 8000000.0,
+            "city": "Ziguinchor"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 1
+            },
+            {
+                "year": 2025,
+                "score": 5
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 11,
+            "name": "Omar",
+            "age": NaN
+        },
+        "job": {
+            "salary": 53000.0,
+            "city": "Dakar"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 2
+            },
+            {
+                "year": 2025,
+                "score": 6
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 12,
+            "name": "Seynabou",
+            "age": 38.0
+        },
+        "job": {
+            "salary": 72000.0,
+            "city": "Thies"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 13,
+            "name": "Mamadou",
+            "age": 24.0
+        },
+        "job": {
+            "salary": 49000.0,
+            "city": "Louga"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 4
+            },
+            {
+                "year": 2025,
+                "score": 8
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 14,
+            "name": "Mariama",
+            "age": 50.0
+        },
+        "job": {
+            "salary": 90000.0,
+            "city": "Dakar"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 5
+            },
+            {
+                "year": 2025,
+                "score": 2
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 15,
+            "name": "Abdou",
+            "age": 21.0
+        },
+        "job": {
+            "salary": 47000.0,
+            "city": "Kaolack"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 16,
+            "name": "Aminata",
+            "age": 36.0
+        },
+        "job": {
+            "salary": 68000.0,
+            "city": "Saint-Louis"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 2
+            },
+            {
+                "year": 2025,
+                "score": 4
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 17,
+            "name": "Cheikh",
+            "age": 32.0
+        },
+        "job": {
+            "salary": 64000.0,
+            "city": "Dakar"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 3
+            },
+            {
+                "year": 2025,
+                "score": 5
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 18,
+            "name": "Rokhaya",
+            "age": 34.0
+        },
+        "job": {
+            "salary": 66000.0,
+            "city": "Mbour"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 19,
+            "name": "Binta",
+            "age": 41.0
+        },
+        "job": {
+            "salary": 75000.0,
+            "city": "Thies"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 5
+            },
+            {
+                "year": 2025,
+                "score": 7
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 20,
+            "name": "Modou",
+            "age": 23.0
+        },
+        "job": {
+            "salary": 46000.0,
+            "city": "Dakar"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 1
+            },
+            {
+                "year": 2025,
+                "score": 8
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 21,
+            "name": "Saliou",
+            "age": 37.0
+        },
+        "job": {
+            "salary": 71000.0,
+            "city": "Louga"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 22,
+            "name": "Adama",
+            "age": 39.0
+        },
+        "job": {
+            "salary": 73000.0,
+            "city": "Ziguinchor"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 3
+            },
+            {
+                "year": 2025,
+                "score": 3
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 23,
+            "name": "Pape",
+            "age": NaN
+        },
+        "job": {
+            "salary": 45000.0,
+            "city": "Kaolack"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 4
+            },
+            {
+                "year": 2025,
+                "score": 4
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 24,
+            "name": "Ndeye",
+            "age": 42.0
+        },
+        "job": {
+            "salary": 77000.0,
+            "city": "Rufisque"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 25,
+            "name": "Souleymane",
+            "age": 18.0
+        },
+        "job": {
+            "salary": 300.0,
+            "city": "Dakar"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 1
+            },
+            {
+                "year": 2025,
+                "score": 6
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 26,
+            "name": "Ali",
+            "age": 19.0
+        },
+        "job": {
+            "salary": 72000.0,
+            "city": "Thies"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 2
+            },
+            {
+                "year": 2025,
+                "score": 7
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 27,
+            "name": "Aissatou",
+            "age": 120.0
+        },
+        "job": {
+            "salary": 73000.0,
+            "city": "Mbour"
+        },
+        "activity": []
+    },
+    {
+        "person": {
+            "id": 28,
+            "name": "Yacine",
+            "age": 33.0
+        },
+        "job": {
+            "salary": NaN,
+            "city": "Dakar"
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 4
+            },
+            {
+                "year": 2025,
+                "score": 2
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 29,
+            "name": "Lamine",
+            "age": 30.0
+        },
+        "job": {
+            "salary": 80000.0,
+            "city": null
+        },
+        "activity": [
+            {
+                "year": 2024,
+                "score": 5
+            },
+            {
+                "year": 2025,
+                "score": 3
+            }
+        ]
+    },
+    {
+        "person": {
+            "id": 30,
+            "name": "Diarra",
+            "age": NaN
+        },
+        "job": {
+            "salary": 82000.0,
+            "city": "Louga"
+        },
+        "activity": []
+    }
+]

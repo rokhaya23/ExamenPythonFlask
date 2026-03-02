@@ -245,6 +245,59 @@
     }
     .empty-state i { font-size: 2rem; margin-bottom: 0.75rem; opacity: 0.35; }
     .empty-state p { font-size: 0.875rem; margin: 0; }
+
+    /* Mini dropdown pour le tableau */
+.dropdown-mini {
+    position: relative;
+    display: inline-block;
+}
+
+.dropdown-menu-mini {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    min-width: 150px;
+    margin-top: 0.25rem;
+    padding: 0.25rem 0;
+    z-index: 1000;
+    display: none;
+}
+
+.dropdown-menu-mini.show {
+    display: block;
+}
+
+.dropdown-menu-mini a {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    color: #374151;
+    text-decoration: none;
+    font-size: 0.875rem;
+    transition: background 0.2s;
+}
+
+.dropdown-menu-mini a:hover {
+    background: #f3f4f6;
+}
+
+.dropdown-menu-mini a i {
+    color: #6366f1;
+    width: 1rem;
+    font-size: 0.875rem;
+}
+
+.dropdown-menu-mini hr {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 0.25rem 0;
+    border: none;
+}
 </style>
 
 <div class="dashboard-wrapper">
@@ -364,7 +417,30 @@
                         : '';
 
                 const downloadBtn = file.output_filename
-                    ? `<a href="/download/${file.output_filename}" class="icon-btn download" title="Télécharger"><i class="fas fa-download"></i></a>`
+                    ? `<div class="dropdown-mini">
+                        <button class="icon-btn download" title="Télécharger" onclick="toggleDownloadMenu(event, ${file.id})">
+                            <i class="fas fa-download"></i>
+                        </button>
+                        <div class="dropdown-menu-mini" id="download-menu-${file.id}">
+                            <a href="#" onclick="downloadFileFormat(${file.id}, 'csv'); return false;">
+                                <i class="fas fa-file-csv"></i> CSV
+                            </a>
+                            <a href="#" onclick="downloadFileFormat(${file.id}, 'xlsx'); return false;">
+                                <i class="fas fa-file-excel"></i> Excel
+                            </a>
+                            <a href="#" onclick="downloadFileFormat(${file.id}, 'json'); return false;">
+                                <i class="fas fa-file-code"></i> JSON
+                            </a>
+                            <a href="#" onclick="downloadFileFormat(${file.id}, 'xml'); return false;">
+                                <i class="fas fa-file-code"></i> XML
+                            </a>
+                            <hr>
+                            <a href="#" onclick="downloadFileFormat(${file.id}, 'sql'); return false;">
+                                <i class="fas fa-database"></i> SQL
+                            </a>
+                        </div>
+                    </div>
+                    `
                     : `<span class="icon-btn disabled" title="Pas de fichier disponible"><i class="fas fa-download"></i></span>`;
 
                 row.innerHTML = `
@@ -398,5 +474,48 @@
                 tbody.appendChild(row);
             });
         }
+        function toggleDownloadMenu(event, fileId) {
+            event.stopPropagation();
+
+            // Fermer tous les autres menus
+            document.querySelectorAll('.dropdown-menu-mini').forEach(menu => {
+                if (menu.id !== `download-menu-${fileId}`) {
+                    menu.classList.remove('show');
+                }
+            });
+
+            // Toggle le menu actuel
+            const menu = document.getElementById(`download-menu-${fileId}`);
+            menu.classList.toggle('show');
+        }
+
+        async function downloadFileFormat(fileId, format) {
+            try {
+                const response = await fetch(`/api/file/${fileId}/download?format=${format}`);
+
+                if (!response.ok) {
+                    throw new Error('Erreur lors de la génération du fichier');
+                }
+
+                const data = await response.json();
+                window.location.href = `/download/${data.filename}`;
+
+                // Fermer le menu
+                document.querySelectorAll('.dropdown-menu-mini').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+
+            } catch (error) {
+                console.error('Erreur téléchargement:', error);
+                alert('Erreur lors du téléchargement. Veuillez réessayer.');
+            }
+        }
+
+        // Fermer les menus si on clique ailleurs
+        document.addEventListener('click', function() {
+            document.querySelectorAll('.dropdown-menu-mini').forEach(menu => {
+                menu.classList.remove('show');
+            });
+        });
 </script>
 {% endblock %}

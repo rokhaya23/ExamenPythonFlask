@@ -2,6 +2,7 @@ import datetime
 import json
 import os
 
+import pandas as pd
 from flask import Flask, render_template, send_file, jsonify, request
 from werkzeug.utils import secure_filename
 
@@ -11,7 +12,7 @@ from Backend.file_utils import allowed_file, load_file, save_dataframe_to_file
 from Backend.missing_value import missing_values
 from Backend.outlier import handle_outliers
 from Backend.normalization import normalize
-from Backend.database import save_to_db, get_history
+from Backend.database import save_to_db, get_history, get_db_connection
 from Backend.dashboard import get_statistics
 from Backend.dashboard import get_all_files_summary
 from Backend.dashboard import get_file_details
@@ -23,7 +24,7 @@ app = Flask(__name__)
 app.config['UPLOADED_FOLDER'] = 'uploads'
 app.config['OUTPUTS_FOLDER'] = 'outputs'
 app.config['MAX_CONTENT_LENGTH'] = 20 * 1024 * 1024       # taille max 20MB
-app.config['ALLOWED_EXTENSIONS'] = {'xlsx','csv','json','xml'}       # extension fichiers acceptés
+app.config['ALLOWED_EXTENSIONS'] = {'xlsx','csv','json','xml','sql'}       # extension fichiers acceptés
 
 
 #---------------------------------------------------------------------------------------------
@@ -132,7 +133,7 @@ def process_file():
 
         # 3. Valeurs manquantes (si coché)
         if options['missing_values']:
-            df, missing_stats = missing_values(df)
+            df, missing_stats = missing_values(df,skip_hidden_detection=False)
             processing_stats['treatments_applied'].append({
                 'treatment': 'Valeurs manquantes',
                 'enabled': True,
@@ -188,6 +189,7 @@ def process_file():
         return jsonify({
             'success': True,
             'message': 'Fichier traité avec succès',
+            'file_id': file_id,
             'filename': output_filename,
             'stats': stats_json
         })
@@ -238,6 +240,96 @@ def api_file_details(file_id):
     if details:
         return jsonify(details)
     return jsonify({'error': 'Fichier non trouvé'}), 404
+
+
+@app.route('/api/file/<int:file_id>/download', methods=['GET'])
+def download_file_format(file_id):
+    """
+    Génère le fichier dans le format demandé
+    """
+    try:
+        format_requested = request.args.get('format', 'csv')
+        print(f"🔍 Téléchargement demandé: file_id={file_id}, format={format_requested}")
+
+        # Connexion BDD
+        conn = get_db_connection()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT * FROM files WHERE id = %s", (file_id,))
+        file_info = cursor.fetchone()
+
+        if not file_info:
+            print(f"❌ Fichier introuvable: id={file_id}")
+            cursor.close()
+            conn.close()
+            return jsonify({'error': 'Fichier non trouvé'}), 404
+
+        print(f"✅ Fichier trouvé: {file_info['original_filename']}")
+
+        # Chemin du fichier nettoyé
+        cleaned_path = os.path.join(app.config['OUTPUTS_FOLDER'], file_info['output_filename'])
+        print(f"🔍 Chemin fichier nettoyé: {cleaned_path}")
+
+        if not os.path.exists(cleaned_path):
+            print(f"❌ Fichier physique introuvable: {cleaned_path}")
+            cursor.close()
+            conn.close()
+            return jsonify({'error': 'Fichier nettoyé introuvable sur le disque'}), 404
+
+        # Charger le DataFrame
+        original_ext = file_info['file_extension'].lower()
+        print(f"🔍 Chargement DataFrame (format original: {original_ext})")
+
+        try:
+            if original_ext == 'csv':
+                df = pd.read_csv(cleaned_path)
+            elif original_ext in ['xlsx', 'xls']:
+                df = pd.read_excel(cleaned_path)
+            elif original_ext == 'json':
+                df = pd.read_json(cleaned_path)
+            elif original_ext == 'xml':
+                df = pd.read_xml(cleaned_path)
+            else:
+                df = pd.read_csv(cleaned_path)
+
+            print(f"✅ DataFrame chargé: {len(df)} lignes, {len(df.columns)} colonnes")
+
+        except Exception as e:
+            print(f"❌ Erreur chargement DataFrame: {str(e)}")
+            cursor.close()
+            conn.close()
+            return jsonify({'error': f'Erreur chargement fichier: {str(e)}'}), 500
+
+        # Générer nouveau fichier
+        base_name = file_info['original_filename'].rsplit('.', 1)[0]
+        timestamp = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
+        new_filename = f"cleaned_{timestamp}_{base_name}.{format_requested}"
+        output_path = os.path.join(app.config['OUTPUTS_FOLDER'], new_filename)
+
+        print(f"🔍 Génération fichier: {output_path}")
+
+        # Sauvegarder dans le format demandé
+        try:
+            save_dataframe_to_file(df, output_path, format_requested)
+            print(f"✅ Fichier généré avec succès: {new_filename}")
+        except Exception as e:
+            print(f"❌ Erreur sauvegarde: {str(e)}")
+            cursor.close()
+            conn.close()
+            return jsonify({'error': f'Erreur génération fichier: {str(e)}'}), 500
+
+        cursor.close()
+        conn.close()
+
+        return jsonify({
+            'success': True,
+            'filename': new_filename
+        })
+
+    except Exception as e:
+        print(f"❌ ERREUR GÉNÉRALE: {str(e)}")
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': f'Erreur serveur: {str(e)}'}), 500
 
 
 if __name__ == '__main__':

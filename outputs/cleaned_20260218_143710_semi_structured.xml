@@ -1,0 +1,21 @@
+<?xml version='1.0' encoding='utf-8'?>
+<data>
+  <row>
+    <id>1</id>
+    <name>Alice</name>
+    <dept>IT</dept>
+    <salary>50000</salary>
+  </row>
+  <row>
+    <id>2</id>
+    <name>Bob</name>
+    <dept/>
+    <salary>-3000</salary>
+  </row>
+  <row>
+    <id>3</id>
+    <name>Charlie</name>
+    <dept/>
+    <salary>70000</salary>
+  </row>
+</data>

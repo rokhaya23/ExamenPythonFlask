@@ -1,0 +1,23 @@
+[
+  {
+    "salary":50000.0,
+    "scores":"[0.8, 0.9]",
+    "user_id":1,
+    "user_name":"Alice",
+    "user_dept":"IT"
+  },
+  {
+    "salary":-3000.0,
+    "scores":"[0.7000000000000001]",
+    "user_id":2,
+    "user_name":"Bob",
+    "user_dept":"HR"
+  },
+  {
+    "salary":0.0,
+    "scores":null,
+    "user_id":3,
+    "user_name":"Charlie",
+    "user_dept":null
+  }
+]

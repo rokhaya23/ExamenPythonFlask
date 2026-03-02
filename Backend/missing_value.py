@@ -6,7 +6,70 @@ from sklearn.linear_model import LinearRegression
 from sklearn.preprocessing import StandardScaler
 
 
-def missing_values(df,max_missing_pct_predictors=0.20):
+def detect_hidden_missing_values(df):
+
+    df_cleaned = df.copy()
+    replacements_log = []
+
+    for col in df_cleaned.columns:
+        non_null_values = df_cleaned[col].dropna()
+
+        if len(non_null_values) == 0:
+            continue
+
+        detected_missing = []
+
+        # Pour chaque valeur dans la colonne
+        for idx, val in df_cleaned[col].items():
+            if pd.isna(val):
+                continue
+
+            is_missing = False
+            val_str = str(val).strip()
+
+            # ✅ RÈGLE 1 : Valeurs vides ou quasi-vides (≤ 2 caractères non-alphanumériques)
+            if len(val_str) <= 2:
+                # Vérifier si ce n'est que des caractères spéciaux
+                alphanumeric_count = sum(c.isalnum() for c in val_str)
+                if alphanumeric_count == 0:
+                    is_missing = True
+
+            # ✅ RÈGLE 2 : Valeurs qui semblent être des marqueurs (patterns communs)
+            if not is_missing and len(val_str) <= 10:
+                if len(set(val_str)) <= 2 and not any(c.isalnum() for c in val_str):
+                    is_missing = True
+
+            # Si détecté comme manquant
+            if is_missing:
+                detected_missing.append({'index': idx, 'value': val})
+                df_cleaned.at[idx, col] = np.nan
+
+        # Afficher les résultats
+        if len(detected_missing) > 0:
+            print(f"   🔍 '{col}' : {len(detected_missing)} valeurs manquantes cachées détectées")
+
+            # Afficher quelques exemples
+            for item in detected_missing[:3]:
+                print(f"      → '{item['value']}'")
+
+            if len(detected_missing) > 3:
+                print(f"      → ... et {len(detected_missing) - 3} autres")
+
+            replacements_log.append({
+                'column': col,
+                'detected': len(detected_missing),
+                'examples': [item['value'] for item in detected_missing[:5]]
+            })
+
+    return df_cleaned, replacements_log
+
+def missing_values(df,max_missing_pct_predictors=0.20, skip_hidden_detection=False):
+
+    #Détecter les valeurs manquantes cachées
+    if not skip_hidden_detection:
+        print("\n🔍 DÉTECTION DES VALEURS MANQUANTES CACHÉES")
+        df, hidden_missing_log = detect_hidden_missing_values(df)
+
     initial_count=len(df)
     # enregistrement avec au moins une valeur manquante return true or false
     df_missing=df.isnull().any(axis=1)
@@ -78,7 +141,7 @@ def missing_values(df,max_missing_pct_predictors=0.20):
 
                 if numb_numeric==1 or corr_matrice is None:
                     median=df_cleaned[col].median()
-                    df_cleaned[col].fillna(median,inplace=True)
+                    df_cleaned[col] = df_cleaned[col].fillna(median)
                     imputation_details.append({
                         'column': col,
                         'methode' : 'Median',
@@ -96,7 +159,7 @@ def missing_values(df,max_missing_pct_predictors=0.20):
 
                 if len(col_corr)==0:
                     median=df_cleaned[col].median()
-                    df_cleaned[col].fillna(median,inplace=True)
+                    df_cleaned[col] = df_cleaned[col].fillna(median)
                     imputation_details.append({
                         'column': col,
                         'methode' : 'Median',
@@ -116,7 +179,7 @@ def missing_values(df,max_missing_pct_predictors=0.20):
 
                 if max_corr<0.3:
                     median=df_cleaned[col].median()
-                    df_cleaned[col].fillna(median,inplace=True)
+                    df_cleaned[col] = df_cleaned[col].fillna(median)
                     imputation_details.append({
                         'column': col,
                         'methode' : 'Median',
@@ -174,7 +237,7 @@ def missing_values(df,max_missing_pct_predictors=0.20):
 
                     except Exception as e:
                         median=df_cleaned[col].median()
-                        df_cleaned[col].fillna(median,inplace=True)
+                        df_cleaned[col] = df_cleaned[col].fillna(median)
                         print(f" Methone Median(KNN échoué)")
                 else:
                     try:
@@ -187,13 +250,13 @@ def missing_values(df,max_missing_pct_predictors=0.20):
                         })
                     except Exception as e:
                         median=df_cleaned[col].median()
-                        df_cleaned[col].fillna(median,inplace=True)
+                        df_cleaned[col] = df_cleaned[col].fillna(median)
                         print(f" Méthode Median(Regression échoué)")
             # traitement colonnes catégorielles
             else:
                 mode_value=df_cleaned[col].mode()
                 if len(mode_value)>0:
-                    df_cleaned[col].fillna(mode_value[0], inplace=True)
+                    df_cleaned[col] = df_cleaned[col].fillna(mode_value[0])
                     imputation_details.append({
                         'column': col,
                         'methode' : 'Mode',
@@ -228,14 +291,14 @@ def missing_values(df,max_missing_pct_predictors=0.20):
                 else:
                     mode_value = df_cleaned[col].mode()
                     if len(mode_value) > 0:
-                        df_cleaned[col].fillna(mode_value[0], inplace=True)
+                        df_cleaned[col] = df_cleaned[col].fillna(mode_value[0])
                         imputation_details.append({
                             'column': col,
                             'methode': 'Mode (fallback)',
                             'type': 'Categoriel',
                             'action': 'Imputation finale par mode'
                         })
-
+        df_cleaned = round_to_original_precision(df_cleaned, df)
         return df_cleaned, stats
 
 def impute_by_regression(df,target_col,max_missing_pct_predictors=0.20):
@@ -367,3 +430,36 @@ def impute_by_regression(df,target_col,max_missing_pct_predictors=0.20):
     print(f"✅ Imputation par régression réussie pour '{target_col}'")
 
     return df_regression
+
+def round_to_original_precision(df_imputed, df_original):
+    """
+    Arrondit les colonnes numériques imputées à la précision
+    observée dans les données originales.
+
+    Ex: si la colonne avait 0 décimale → arrondi à l'entier
+        si la colonne avait 1 décimale → arrondi à 1 décimale
+    """
+    df_result = df_imputed.copy()
+
+    for col in df_result.columns:
+        # Travailler uniquement sur les colonnes numériques
+        if col not in df_original.columns:
+            continue
+        if not pd.api.types.is_numeric_dtype(df_result[col]):
+            continue
+
+        # Calculer le nb max de décimales dans les données originales
+        max_decimals = 0
+        for val in df_original[col].dropna():
+            try:
+                s = str(float(val))
+                if '.' in s:
+                    dec = len(s.split('.')[1].rstrip('0'))
+                    max_decimals = max(max_decimals, dec)
+            except (ValueError, TypeError):
+                pass
+
+        # Arrondir
+        df_result[col] = df_result[col].round(max_decimals)
+
+    return df_result

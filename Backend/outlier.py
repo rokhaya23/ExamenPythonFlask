@@ -1,11 +1,116 @@
 # traitement des valeurs abberantes
 import numpy as np
+import pandas as pd
 
+
+def detect_type_mismatch_outliers(df):
+    """
+    Détecte et corrige automatiquement les valeurs dont le type ne correspond pas
+    au type dominant de la colonne.
+
+    Fonctionne pour tous les types : numérique, texte, etc.
+    Pas de liste prédéfinie de valeurs.
+    """
+    import numpy as np
+    import pandas as pd
+
+    df_cleaned = df.copy()
+    type_mismatch_log = []
+
+    for col in df_cleaned.columns:
+        non_null_values = df_cleaned[col].dropna()
+
+        if len(non_null_values) == 0:
+            continue
+
+        # Compter les types : numérique vs non-numérique
+        numeric_count = 0
+        non_numeric_count = 0
+
+        for val in non_null_values:
+            # Essayer de convertir en nombre
+            try:
+                float(val)
+                numeric_count += 1
+            except (ValueError, TypeError):
+                non_numeric_count += 1
+
+        total = len(non_null_values)
+
+        # Déterminer le type dominant
+        if numeric_count > non_numeric_count:
+            dominant_type = 'numeric'
+            dominant_count = numeric_count
+        else:
+            dominant_type = 'non_numeric'
+            dominant_count = non_numeric_count
+
+        dominant_ratio = dominant_count / total
+
+        # Si un type domine clairement (> 70% des valeurs)
+        if dominant_ratio > 0.7:
+            outliers_detected = []
+
+            # Parcourir toutes les valeurs et remplacer celles qui ne sont pas du type dominant
+            for idx, val in df_cleaned[col].items():
+                if pd.isna(val):
+                    continue
+
+                # Vérifier si la valeur correspond au type dominant
+                is_numeric = False
+                try:
+                    float(val)
+                    is_numeric = True
+                except (ValueError, TypeError):
+                    is_numeric = False
+
+                val_type = 'numeric' if is_numeric else 'non_numeric'
+
+                # Si le type ne correspond pas au type dominant
+                if val_type != dominant_type:
+                    outliers_detected.append({
+                        'index': idx,
+                        'value': val,
+                        'type': val_type
+                    })
+                    # Remplacer par NaN
+                    df_cleaned.at[idx, col] = np.nan
+
+            # Afficher les résultats
+            if len(outliers_detected) > 0:
+                print(f"   ⚠️ '{col}' : {len(outliers_detected)} valeurs de type incorrect")
+                print(f"      Type dominant : {dominant_type} ({dominant_ratio * 100:.0f}%)")
+
+                # Afficher quelques exemples
+                for item in outliers_detected[:3]:
+                    print(f"      → '{item['value']}' (type: {item['type']})")
+
+                if len(outliers_detected) > 3:
+                    print(f"      → ... et {len(outliers_detected) - 3} autres")
+
+                type_mismatch_log.append({
+                    'column': col,
+                    'dominant_type': dominant_type,
+                    'dominant_ratio': dominant_ratio,
+                    'outliers_count': len(outliers_detected)
+                })
+
+    return df_cleaned, type_mismatch_log
 
 def handle_outliers(df,threshold_iqr=1.5):
     # une valeur aberrante c'est une valeur EXTRÊME qui ne suit pas le modèle général.
     df_cleaned = df.copy()
     initial_count = len(df_cleaned)
+
+    #1 : Détecter les valeurs de type incorrect
+    print("\n🔍 DÉTECTION DES VALEURS DE TYPE INCORRECT")
+    df_cleaned, type_mismatch_log = detect_type_mismatch_outliers(df_cleaned)
+
+    #Convertir les colonnes numériques après correction des types
+    df_cleaned = cast_columns_after_mismatch_fix(df_cleaned)
+
+    #2 : Détecter les outliers numériques (IQR)
+    print("\n🔍 DÉTECTION DES OUTLIERS NUMÉRIQUES (IQR)")
 
     #extraire les valeurs numeriques
     numeric_cols = df_cleaned.select_dtypes(include=[np.number]).columns.tolist()
@@ -137,3 +242,28 @@ def handle_outliers(df,threshold_iqr=1.5):
     stats['rows_removed'] = len(rows_to_remove)
 
     return df_cleaned, stats
+
+
+def cast_columns_after_mismatch_fix(df):
+    """
+    Après avoir remplacé les valeurs de mauvais type par NaN,
+    convertit les colonnes à dominante numérique en float.
+    """
+    df_casted = df.copy()
+
+    for col in df_casted.columns:
+        if df_casted[col].dtype == object or pd.api.types.is_string_dtype(df_casted[col]):
+            non_null = df_casted[col].dropna()
+            if len(non_null) == 0:
+                continue
+
+            # Essayer de convertir en numérique
+            converted = pd.to_numeric(non_null, errors='coerce')
+            success_ratio = converted.notna().sum() / len(non_null)
+
+            # Si 70%+ des valeurs sont convertibles → forcer en float
+            if success_ratio >= 0.7:
+                df_casted[col] = pd.to_numeric(df_casted[col], errors='coerce')
+                print(f"   🔄 '{col}' converti en numérique ({success_ratio * 100:.0f}% de valeurs valides)")
+
+    return df_casted

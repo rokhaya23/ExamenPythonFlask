@@ -227,6 +227,74 @@
     .comparison-table { width: 100%; font-size: 0.825rem; border-collapse: collapse; }
     .comparison-table th, .comparison-table td { padding: 0.5rem 0.75rem; border: 1px solid var(--border); }
     .comparison-table thead { background: var(--bg); font-size: 0.75rem; }
+
+    /* Dropdown personnalisé */
+.dropdown {
+    position: relative;
+    display: inline-block;
+}
+
+.btn-download.dropdown-toggle {
+    padding-right: 2.5rem;
+    position: relative;
+}
+
+.btn-download.dropdown-toggle::after {
+    content: "\f078";
+    font-family: "Font Awesome 6 Free";
+    font-weight: 900;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 0.75rem;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    min-width: 200px;
+    margin-top: 0.5rem;
+    padding: 0.5rem 0;
+    z-index: 1000;
+    display: none;
+}
+
+.dropdown-menu.show {
+    display: block;
+}
+
+.dropdown-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.75rem 1rem;
+    color: #374151;
+    text-decoration: none;
+    transition: background 0.2s;
+    cursor: pointer;
+}
+
+.dropdown-item:hover {
+    background: #f3f4f6;
+}
+
+.dropdown-item i {
+    color: #6366f1;
+    width: 1.25rem;
+}
+
+.dropdown-divider {
+    height: 1px;
+    background: #e5e7eb;
+    margin: 0.5rem 0;
+    border: none;
+}
 </style>
 
 <div class="detail-wrapper">
@@ -240,11 +308,32 @@
                 <i class="fas fa-file-alt" style="color:var(--primary);"></i>
                 <span id="fileName">Chargement...</span>
             </h2>
+            <!-- ✅ Wrapper pour le badge + dropdown -->
             <div style="display:flex;align-items:center;gap:.75rem;">
                 <span id="structBadge"></span>
-                <a id="downloadBtn" href="#" class="btn-download" style="display:none;">
-                    <i class="fas fa-download"></i> Télécharger le fichier nettoyé
-                </a>
+                <div class="dropdown" id="downloadDropdown" style="display:none;">
+                    <button class="btn-download dropdown-toggle" type="button">
+                        <i class="fas fa-download"></i> Télécharger
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li><a class="dropdown-item" href="#" data-format="csv">
+                            <i class="fas fa-file-csv"></i> CSV
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" data-format="xlsx">
+                            <i class="fas fa-file-excel"></i> Excel (XLSX)
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" data-format="json">
+                            <i class="fas fa-file-code"></i> JSON
+                        </a></li>
+                        <li><a class="dropdown-item" href="#" data-format="xml">
+                            <i class="fas fa-file-code"></i> XML
+                        </a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="#" data-format="sql">
+                            <i class="fas fa-database"></i> SQL Script
+                        </a></li>
+                    </ul>
+                </div>
             </div>
         </div>
         <div class="d-card-body">
@@ -360,11 +449,70 @@
             structBadge.innerHTML = `<span class="struct-badge struct-structured"><i class="fas fa-table"></i> Structuré</span>`;
         }
 
-        // Bouton téléchargement
+        // ✅ NOUVEAU : Menu déroulant de téléchargement
         if (info.output_filename) {
-            const downloadBtn = document.getElementById('downloadBtn');
-            downloadBtn.href = `/download/${info.output_filename}`;
-            downloadBtn.style.display = 'inline-flex';
+            const dropdown = document.getElementById('downloadDropdown');
+            dropdown.style.display = 'inline-block';
+
+            // Ajouter les événements de clic sur chaque format
+            const items = dropdown.querySelectorAll('.dropdown-item');
+            items.forEach(item => {
+                item.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const format = this.getAttribute('data-format');
+                    downloadFile(fileId, format);
+                });
+            });
+
+            // Toggle du menu
+            const toggleBtn = dropdown.querySelector('.dropdown-toggle');
+            const menu = dropdown.querySelector('.dropdown-menu');
+
+            toggleBtn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                menu.classList.toggle('show');
+            });
+
+            // Fermer le menu si on clique ailleurs
+            document.addEventListener('click', function() {
+                menu.classList.remove('show');
+            });
+        }
+    }
+
+// ✅ NOUVELLE FONCTION : Télécharger dans le format choisi
+    async function downloadFile(fileId, format) {
+        try {
+            // Afficher un loader
+            const btn = document.querySelector('.btn-download');
+            const originalText = btn.innerHTML;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération...';
+            btn.disabled = true;
+
+            // Appeler l'API pour générer le fichier dans le format demandé
+            const response = await fetch(`/api/file/${fileId}/download?format=${format}`);
+
+            if (!response.ok) {
+                throw new Error('Erreur lors de la génération du fichier');
+            }
+
+            const data = await response.json();
+
+            // Télécharger le fichier
+            window.location.href = `/download/${data.filename}`;
+
+            // Restaurer le bouton
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+
+        } catch (error) {
+            console.error('Erreur téléchargement:', error);
+            alert('Erreur lors du téléchargement. Veuillez réessayer.');
+
+            // Restaurer le bouton
+            const btn = document.querySelector('.btn-download');
+            btn.innerHTML = '<i class="fas fa-download"></i> Télécharger';
+            btn.disabled = false;
         }
     }
 
