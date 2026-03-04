@@ -1,15 +1,16 @@
 import mysql.connector
 from mysql.connector import Error
 import json
+import os
 
 # ═══ CONFIGURATION DB ═══
 DB_CONFIG = {
-    'host': 'localhost',
-    'user': 'root',
-    'password': '',
-    'database': 'data_cleaning_app',
-    'port': 3306,
-    'charset': 'utf8mb4'
+    'host':     os.environ.get('MYSQL_ADDON_HOST',     'localhost'),
+    'user':     os.environ.get('MYSQL_ADDON_USER',     'root'),
+    'password': os.environ.get('MYSQL_ADDON_PASSWORD', ''),
+    'database': os.environ.get('MYSQL_ADDON_DB',       'data_cleaning_app'),
+    'port':     int(os.environ.get('MYSQL_ADDON_PORT', 3306)),
+    'charset':  'utf8mb4'
 }
 
 #connection a la base de données
@@ -150,3 +151,54 @@ def get_history(limit=10):
             cursor.close()
             conn.close()
 
+def init_db():
+    """Crée les tables si elles n'existent pas"""
+    conn = get_db_connection()
+    if not conn:
+        print("Impossible de se connecter à la base")
+        return False
+    try:
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS files (
+                id                 INT AUTO_INCREMENT PRIMARY KEY,
+                original_filename  VARCHAR(255)  NOT NULL,
+                saved_filename     VARCHAR(255),
+                file_extension     VARCHAR(10),
+                file_size          INT,
+                initial_rows       INT,
+                initial_columns    INT,
+                final_rows         INT,
+                final_columns      INT,
+                output_filename    VARCHAR(255),
+                processing_status  VARCHAR(50)   DEFAULT 'processing',
+                error_message      TEXT,
+                upload_date        DATETIME      DEFAULT CURRENT_TIMESTAMP
+            )
+        """)
+
+        cursor.execute("""
+            CREATE TABLE IF NOT EXISTS processing_logs (
+                id             INT AUTO_INCREMENT PRIMARY KEY,
+                file_id        INT          NOT NULL,
+                treatment_type VARCHAR(100),
+                enabled        TINYINT(1)   DEFAULT 1,
+                success        TINYINT(1)   DEFAULT 1,
+                stats_json     LONGTEXT,
+                created_at     DATETIME     DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (file_id) REFERENCES files(id) ON DELETE CASCADE
+            )
+        """)
+
+        conn.commit()
+        print("✅ Base de données initialisée")
+        return True
+
+    except Error as e:
+        print(f"❌ Erreur init DB : {e}")
+        return False
+    finally:
+        if conn.is_connected():
+            cursor.close()
+            conn.close()

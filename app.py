@@ -1,7 +1,8 @@
 import datetime
 import json
 import os
-
+from dotenv import load_dotenv
+load_dotenv()
 import pandas as pd
 from flask import Flask, render_template, send_file, jsonify, request
 from werkzeug.utils import secure_filename
@@ -12,7 +13,7 @@ from Backend.file_utils import allowed_file, load_file, save_dataframe_to_file
 from Backend.missing_value import missing_values
 from Backend.outlier import handle_outliers
 from Backend.normalization import normalize
-from Backend.database import save_to_db, get_history, get_db_connection
+from Backend.database import save_to_db, get_history, get_db_connection, init_db
 from Backend.dashboard import get_statistics
 from Backend.dashboard import get_all_files_summary
 from Backend.dashboard import get_file_details
@@ -331,6 +332,9 @@ def download_file_format(file_id):
         traceback.print_exc()
         return jsonify({'error': f'Erreur serveur: {str(e)}'}), 500
 
+#creation automatique des tables de la base de donnee sinon creee
+with app.app_context():
+    init_db()
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0',debug=True)
