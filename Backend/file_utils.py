@@ -76,14 +76,16 @@ def load_nested_xml(filepath):
     # Normaliser en DataFrame (aplatit automatiquement)
     df = pd.json_normalize(records, sep='_')
 
-    # Convertir les structures complexes en JSON strings
+    cols_to_drop = []
     for col in df.columns:
-        if df[col].dtype == 'object':
-            sample = df[col].dropna().head(1)
-            if len(sample) > 0 and isinstance(sample.iloc[0], (dict, list)):
-                df[col] = df[col].apply(
-                    lambda x: json.dumps(x) if isinstance(x, (dict, list)) else x
-                )
+        sample = df[col].dropna().head(1)
+        if len(sample) > 0:
+            val = str(sample.iloc[0]).strip()
+            if val.startswith('[{') or val.startswith('{'):
+                cols_to_drop.append(col)
+    if cols_to_drop:
+        df = df.drop(columns=cols_to_drop)
+        print(f"   🗑️ Colonnes JSON brut supprimées : {cols_to_drop}")
 
     return df
 
@@ -251,7 +253,7 @@ def data_structured(df):
             for val in sample_values:
                 val_str = str(val)
                 # Contient @ (email), lettres majoritaires, ou espaces multiples
-                if '@' in val_str or val_str.replace(' ', '').isalpha() or val_str.count(' ') > 1:
+                if '@' in val_str or val_str.replace(' ', '').isalpha() or val_str.count(' ') > 1 or val_str.startswith('+'):
                     should_protect = True
                     break
 

@@ -103,6 +103,33 @@
     .struct-structured     { background: var(--success-light); color: #065f46; }
     .struct-semistructured { background: #ede9fe; color: #5b21b6; }
 
+    .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+    }
+
+    /* Bouton Aperçu */
+    .btn-preview {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.4rem;
+        background: var(--primary-light);
+        color: var(--primary);
+        border: 1px solid #c7d2fe;
+        border-radius: 8px;
+        padding: 0.45rem 1rem;
+        font-size: 0.825rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .btn-preview:hover {
+        background: var(--primary);
+        color: #fff;
+        border-color: var(--primary);
+    }
+
     .btn-download {
         display: inline-flex;
         align-items: center;
@@ -116,6 +143,7 @@
         font-weight: 600;
         text-decoration: none;
         transition: background 0.2s;
+        cursor: pointer;
     }
     .btn-download:hover { background: #059669; color: #fff; }
 
@@ -144,7 +172,6 @@
     .kpi-text p      { font-size: 0.72rem; font-weight: 600; color: var(--text-muted); margin: 0; text-transform: uppercase; letter-spacing: 0.04em; }
     .kpi-text strong { font-size: 1.15rem; color: var(--text-main); font-weight: 700; }
 
-    /* Treatment cards */
     .treatment-card {
         border: 1px solid var(--border);
         border-left: 4px solid var(--primary);
@@ -175,7 +202,6 @@
     }
     .treatment-body { padding: 1.1rem 1.25rem; }
 
-    /* Stats rows */
     .stat-item {
         display: flex;
         justify-content: space-between;
@@ -209,12 +235,10 @@
         color: var(--text-main);
     }
 
-    /* Override Bootstrap alerts to match design */
     .alert { border-radius: 8px; padding: 0.75rem 1rem; font-size: 0.85rem; border: none; }
     .alert-success { background: var(--success-light); color: #065f46; }
     .alert-info    { background: var(--info-light);    color: #1e40af; }
 
-    /* Slim down Bootstrap badges */
     .badge { border-radius: 20px; padding: 0.25rem 0.65rem; font-size: 0.72rem; font-weight: 600; }
     .bg-success { background-color: var(--success-light) !important; color: #065f46 !important; }
     .bg-danger  { background-color: var(--danger-light)  !important; color: #991b1b !important; }
@@ -228,73 +252,489 @@
     .comparison-table th, .comparison-table td { padding: 0.5rem 0.75rem; border: 1px solid var(--border); }
     .comparison-table thead { background: var(--bg); font-size: 0.75rem; }
 
-    /* Dropdown personnalisé */
-.dropdown {
-    position: relative;
-    display: inline-block;
-}
+    .dropdown {
+        position: relative;
+        display: inline-block;
+    }
+    .btn-download.dropdown-toggle { padding-right: 2.5rem; position: relative; }
+    .btn-download.dropdown-toggle::after {
+        content: "\f078";
+        font-family: "Font Awesome 6 Free";
+        font-weight: 900;
+        position: absolute;
+        right: 1rem;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.75rem;
+    }
+    .dropdown-menu {
+        position: absolute;
+        top: 100%;
+        right: 0;
+        background: white;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        min-width: 200px;
+        margin-top: 0.5rem;
+        padding: 0.5rem 0;
+        z-index: 1000;
+        display: none;
+    }
+    .dropdown-menu.show { display: block; }
+    .dropdown-item {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1rem;
+        color: #374151;
+        text-decoration: none;
+        transition: background 0.2s;
+        cursor: pointer;
+    }
+    .dropdown-item:hover { background: #f3f4f6; }
+    .dropdown-item i { color: #6366f1; width: 1.25rem; }
+    .dropdown-divider { height: 1px; background: #e5e7eb; margin: 0.5rem 0; border: none; }
 
-.btn-download.dropdown-toggle {
-    padding-right: 2.5rem;
-    position: relative;
-}
+    /* ═══════════════════════════════════════════
+       MODAL APERÇU DES DONNÉES
+    ═══════════════════════════════════════════ */
+    .preview-overlay {
+        position: fixed;
+        inset: 0;
+        background: rgba(0,0,0,0.45);
+        backdrop-filter: blur(3px);
+        z-index: 9000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.22s ease;
+    }
+    .preview-overlay.open {
+        opacity: 1;
+        pointer-events: all;
+    }
 
-.btn-download.dropdown-toggle::after {
-    content: "\f078";
-    font-family: "Font Awesome 6 Free";
-    font-weight: 900;
-    position: absolute;
-    right: 1rem;
-    top: 50%;
-    transform: translateY(-50%);
-    font-size: 0.75rem;
-}
+    .preview-modal {
+        background: var(--surface);
+        border-radius: 16px;
+        border: 1px solid var(--border);
+        box-shadow: 0 24px 64px rgba(0,0,0,0.18);
+        width: 92vw;
+        max-width: 1200px;
+        max-height: 88vh;
+        display: flex;
+        flex-direction: column;
+        transform: translateY(16px) scale(0.98);
+        transition: transform 0.22s ease;
+        overflow: hidden;
+    }
+    .preview-overlay.open .preview-modal {
+        transform: translateY(0) scale(1);
+    }
 
-.dropdown-menu {
-    position: absolute;
-    top: 100%;
-    right: 0;
-    background: white;
-    border: 1px solid #e5e7eb;
-    border-radius: 8px;
-    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-    min-width: 200px;
-    margin-top: 0.5rem;
-    padding: 0.5rem 0;
-    z-index: 1000;
-    display: none;
-}
+    /* Header modal */
+    .preview-modal-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1.1rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        flex-shrink: 0;
+        gap: 1rem;
+    }
+    .preview-modal-title {
+        display: flex;
+        align-items: center;
+        gap: 0.6rem;
+        font-size: 0.95rem;
+        font-weight: 700;
+        color: var(--text-main);
+        flex: 1;
+        min-width: 0;
+    }
+    .preview-modal-title span {
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .preview-modal-title i { color: var(--primary); flex-shrink: 0; }
 
-.dropdown-menu.show {
-    display: block;
-}
+    .preview-modal-controls {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
 
-.dropdown-item {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    padding: 0.75rem 1rem;
-    color: #374151;
-    text-decoration: none;
-    transition: background 0.2s;
-    cursor: pointer;
-}
+    /* Barre d'outils */
+    .preview-toolbar {
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        padding: 0.75rem 1.5rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--bg);
+        flex-shrink: 0;
+        flex-wrap: wrap;
+    }
 
-.dropdown-item:hover {
-    background: #f3f4f6;
-}
+    .preview-search {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.35rem 0.75rem;
+        flex: 1;
+        min-width: 200px;
+        max-width: 320px;
+    }
+    .preview-search i { color: var(--text-muted); font-size: 0.8rem; }
+    .preview-search input {
+        border: none;
+        outline: none;
+        background: transparent;
+        font-size: 0.825rem;
+        color: var(--text-main);
+        width: 100%;
+    }
+    .preview-search input::placeholder { color: var(--text-muted); }
 
-.dropdown-item i {
-    color: #6366f1;
-    width: 1.25rem;
-}
+    .preview-filter-select {
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        padding: 0.35rem 0.65rem;
+        font-size: 0.8rem;
+        color: var(--text-main);
+        background: var(--surface);
+        outline: none;
+        cursor: pointer;
+    }
 
-.dropdown-divider {
-    height: 1px;
-    background: #e5e7eb;
-    margin: 0.5rem 0;
-    border: none;
-}
+    .preview-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.3rem;
+        padding: 0.25rem 0.65rem;
+        border-radius: 20px;
+        font-size: 0.72rem;
+        font-weight: 600;
+        background: var(--primary-light);
+        color: var(--primary);
+        white-space: nowrap;
+    }
+
+    .preview-toolbar-right {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        margin-left: auto;
+    }
+
+    .toolbar-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.35rem 0.75rem;
+        border: 1px solid var(--border);
+        border-radius: 7px;
+        font-size: 0.78rem;
+        font-weight: 600;
+        background: var(--surface);
+        color: var(--text-muted);
+        cursor: pointer;
+        transition: all 0.15s;
+        white-space: nowrap;
+    }
+    .toolbar-btn:hover {
+        background: var(--primary-light);
+        border-color: #c7d2fe;
+        color: var(--primary);
+    }
+    .toolbar-btn.active {
+        background: var(--primary);
+        border-color: var(--primary);
+        color: #fff;
+    }
+
+    /* Tabs colonnes/données */
+    .preview-tabs {
+        display: flex;
+        gap: 0;
+        padding: 0 1.5rem;
+        border-bottom: 1px solid var(--border);
+        background: var(--surface);
+        flex-shrink: 0;
+    }
+    .preview-tab {
+        padding: 0.65rem 1.1rem;
+        font-size: 0.825rem;
+        font-weight: 600;
+        color: var(--text-muted);
+        cursor: pointer;
+        border-bottom: 2px solid transparent;
+        transition: all 0.15s;
+        white-space: nowrap;
+    }
+    .preview-tab:hover { color: var(--primary); }
+    .preview-tab.active {
+        color: var(--primary);
+        border-bottom-color: var(--primary);
+    }
+
+    /* Corps scrollable */
+    .preview-modal-body {
+        flex: 1;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+    }
+
+    /* Vue tableau */
+    .preview-table-wrap {
+        flex: 1;
+        overflow: auto;
+        padding: 0;
+    }
+
+    .preview-data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.8rem;
+        font-family: 'ui-monospace', 'SFMono-Regular', monospace;
+    }
+    .preview-data-table thead {
+        position: sticky;
+        top: 0;
+        z-index: 2;
+    }
+    .preview-data-table thead tr {
+        background: var(--bg);
+        border-bottom: 2px solid var(--border);
+    }
+    .preview-data-table th {
+        padding: 0.6rem 1rem;
+        text-align: left;
+        white-space: nowrap;
+        font-size: 0.72rem;
+        font-weight: 700;
+        color: var(--text-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        border-right: 1px solid var(--border);
+        cursor: pointer;
+        user-select: none;
+        position: relative;
+    }
+    .preview-data-table th:last-child { border-right: none; }
+    .preview-data-table th:hover { background: #eef2ff; color: var(--primary); }
+    .preview-data-table th .sort-icon {
+        margin-left: 0.35rem;
+        opacity: 0.4;
+        font-size: 0.65rem;
+    }
+    .preview-data-table th.sorted .sort-icon { opacity: 1; color: var(--primary); }
+
+    /* Row index */
+    .preview-data-table td:first-child,
+    .preview-data-table th:first-child {
+        background: var(--bg);
+        color: var(--text-muted);
+        font-size: 0.7rem;
+        text-align: center;
+        min-width: 40px;
+        border-right: 1px solid var(--border);
+        position: sticky;
+        left: 0;
+        z-index: 1;
+    }
+
+    .preview-data-table tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.1s;
+    }
+    .preview-data-table tbody tr:last-child { border-bottom: none; }
+    .preview-data-table tbody tr:hover { background: #fafbff; }
+    .preview-data-table tbody tr.highlighted { background: #fef9c3; }
+
+    .preview-data-table td {
+        padding: 0.5rem 1rem;
+        color: var(--text-main);
+        border-right: 1px solid var(--border);
+        max-width: 220px;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+    .preview-data-table td:last-child { border-right: none; }
+
+    .cell-null {
+        color: #d1d5db;
+        font-style: italic;
+        font-size: 0.72rem;
+    }
+    .cell-number { color: #1d4ed8; }
+    .cell-string { color: var(--text-main); }
+    .cell-bool   { color: #7c3aed; font-weight: 600; }
+
+    /* Vue colonnes (schema) */
+    .preview-schema {
+        flex: 1;
+        overflow-y: auto;
+        padding: 1.25rem 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 0.875rem;
+        align-content: start;
+    }
+    .schema-col-card {
+        background: var(--bg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 0.875rem 1rem;
+    }
+    .schema-col-name {
+        font-size: 0.825rem;
+        font-weight: 700;
+        color: var(--text-main);
+        margin-bottom: 0.4rem;
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .schema-dtype {
+        display: inline-block;
+        padding: 0.15rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.68rem;
+        font-weight: 700;
+        text-transform: uppercase;
+    }
+    .dtype-int    { background: #dbeafe; color: #1d4ed8; }
+    .dtype-float  { background: #e0e7ff; color: #3730a3; }
+    .dtype-str    { background: #d1fae5; color: #065f46; }
+    .dtype-bool   { background: #ede9fe; color: #5b21b6; }
+    .dtype-other  { background: #f3f4f6; color: #374151; }
+
+    .schema-stats {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.3rem;
+        margin-top: 0.5rem;
+    }
+    .schema-stat {
+        font-size: 0.72rem;
+        color: var(--text-muted);
+    }
+    .schema-stat strong { color: var(--text-main); }
+
+    .schema-sample {
+        margin-top: 0.5rem;
+        padding-top: 0.5rem;
+        border-top: 1px solid var(--border);
+        font-size: 0.72rem;
+        color: var(--text-muted);
+    }
+    .schema-sample-vals {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.25rem;
+        margin-top: 0.25rem;
+    }
+    .sample-chip {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 4px;
+        padding: 0.1rem 0.4rem;
+        font-size: 0.7rem;
+        color: var(--text-main);
+        font-family: monospace;
+    }
+
+    /* Pied du modal */
+    .preview-modal-footer {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 1.5rem;
+        border-top: 1px solid var(--border);
+        background: var(--bg);
+        flex-shrink: 0;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+    .preview-pagination {
+        display: flex;
+        align-items: center;
+        gap: 0.4rem;
+    }
+    .page-btn {
+        width: 28px; height: 28px;
+        border: 1px solid var(--border);
+        border-radius: 6px;
+        background: var(--surface);
+        color: var(--text-muted);
+        font-size: 0.78rem;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .page-btn:hover:not(:disabled) { background: var(--primary-light); color: var(--primary); border-color: #c7d2fe; }
+    .page-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+    .page-btn.active { background: var(--primary); color: #fff; border-color: var(--primary); }
+    .page-info { font-size: 0.78rem; color: var(--text-muted); white-space: nowrap; }
+
+    .btn-close-modal {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.35rem;
+        padding: 0.4rem 1rem;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        background: var(--surface);
+        color: var(--text-muted);
+        font-size: 0.825rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.15s;
+    }
+    .btn-close-modal:hover { background: var(--danger-light); color: var(--danger); border-color: #fca5a5; }
+
+    .icon-btn-close {
+        width: 30px; height: 30px;
+        border-radius: 7px;
+        border: none;
+        background: transparent;
+        color: var(--text-muted);
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer;
+        font-size: 0.9rem;
+        transition: all 0.15s;
+    }
+    .icon-btn-close:hover { background: var(--danger-light); color: var(--danger); }
+
+    /* Loading skeleton */
+    .skeleton {
+        background: linear-gradient(90deg, #f0f0f0 25%, #e8e8e8 50%, #f0f0f0 75%);
+        background-size: 200% 100%;
+        animation: skeleton-loading 1.2s infinite;
+        border-radius: 4px;
+    }
+    @keyframes skeleton-loading {
+        0%   { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+
+    .no-results {
+        text-align: center;
+        padding: 3rem 1rem;
+        color: var(--text-muted);
+        font-size: 0.875rem;
+    }
+    .no-results i { font-size: 1.5rem; margin-bottom: 0.5rem; display: block; opacity: 0.4; }
 </style>
 
 <div class="detail-wrapper">
@@ -308,9 +748,13 @@
                 <i class="fas fa-file-alt" style="color:var(--primary);"></i>
                 <span id="fileName">Chargement...</span>
             </h2>
-            <!-- ✅ Wrapper pour le badge + dropdown -->
-            <div style="display:flex;align-items:center;gap:.75rem;">
+            <div class="header-actions">
                 <span id="structBadge"></span>
+                <!-- Bouton Aperçu -->
+                <button class="btn-preview" id="previewBtn" onclick="openPreview()" style="display:none;">
+                    <i class="fas fa-table"></i> Aperçu des données
+                </button>
+                <!-- Dropdown Télécharger -->
                 <div class="dropdown" id="downloadDropdown" style="display:none;">
                     <button class="btn-download dropdown-toggle" type="button">
                         <i class="fas fa-download"></i> Télécharger
@@ -395,357 +839,650 @@
             <h2><i class="fas fa-list-check" style="color:var(--primary);"></i> Détails des traitements</h2>
         </div>
         <div class="d-card-body">
-            <div id="treatmentsList">
-                <!-- Rempli par JavaScript -->
-            </div>
+            <div id="treatmentsList"></div>
         </div>
     </div>
 
 </div>
 
+
+<!-- ═══════════════════════════════════════════
+     MODAL APERÇU DES DONNÉES
+═══════════════════════════════════════════ -->
+<div class="preview-overlay" id="previewOverlay" onclick="handleOverlayClick(event)">
+    <div class="preview-modal" id="previewModal">
+
+        <!-- Header -->
+        <div class="preview-modal-header">
+            <div class="preview-modal-title">
+                <i class="fas fa-table"></i>
+                <span id="previewFileName">-</span>
+            </div>
+            <div class="preview-modal-controls">
+                <button class="icon-btn-close" onclick="closePreview()" title="Fermer">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- Toolbar -->
+        <div class="preview-toolbar">
+            <div class="preview-search">
+                <i class="fas fa-search"></i>
+                <input type="text" id="searchInput" placeholder="Rechercher dans les données..." oninput="onSearch()">
+            </div>
+
+            <select class="preview-filter-select" id="colFilter" onchange="onColFilter()">
+                <option value="">Toutes les colonnes</option>
+            </select>
+
+            <span class="preview-badge" id="rowCountBadge">
+                <i class="fas fa-database"></i> <span id="visibleCount">0</span> lignes
+            </span>
+
+            <div class="preview-toolbar-right">
+                <button class="toolbar-btn" id="btnNullFilter" onclick="toggleNullFilter()">
+                    <i class="fas fa-filter"></i> Avec NaN
+                </button>
+                <button class="toolbar-btn" onclick="exportVisibleCSV()">
+                    <i class="fas fa-file-export"></i> Exporter vue
+                </button>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="preview-tabs">
+            <div class="preview-tab active" onclick="switchTab('data')" id="tabData">
+                <i class="fas fa-table"></i> Données
+            </div>
+            <div class="preview-tab" onclick="switchTab('schema')" id="tabSchema">
+                <i class="fas fa-sitemap"></i> Schéma des colonnes
+            </div>
+        </div>
+
+        <!-- Body -->
+        <div class="preview-modal-body">
+
+            <!-- Vue Données -->
+            <div id="viewData" class="preview-table-wrap">
+                <table class="preview-data-table" id="previewTable">
+                    <thead id="previewThead"></thead>
+                    <tbody id="previewTbody"></tbody>
+                </table>
+                <div class="no-results" id="noResults" style="display:none;">
+                    <i class="fas fa-search-minus"></i>
+                    Aucun résultat pour cette recherche
+                </div>
+            </div>
+
+            <!-- Vue Schéma -->
+            <div id="viewSchema" class="preview-schema" style="display:none;"></div>
+        </div>
+
+        <!-- Footer -->
+        <div class="preview-modal-footer">
+            <div class="preview-pagination" id="pagination"></div>
+            <span class="page-info" id="pageInfo"></span>
+            <button class="btn-close-modal" onclick="closePreview()">
+                <i class="fas fa-times"></i> Fermer
+            </button>
+        </div>
+    </div>
+</div>
+
+
 <script>
-    const fileId = {{ file_id }};
+const fileId = {{ file_id }};
 
-    document.addEventListener('DOMContentLoaded', function() {
-        loadFileDetails();
-    });
+// ─── État global preview ───────────────────
+let previewData = {
+    columns: [],
+    rows: [],
+    filtered: [],
+    currentPage: 1,
+    pageSize: 50,
+    sortCol: null,
+    sortAsc: true,
+    searchTerm: '',
+    colFilter: '',
+    nullFilter: false,
+    filename: ''
+};
 
-    async function loadFileDetails() {
-        try {
-            const response = await fetch(`/api/file/${fileId}`);
-            const data = await response.json();
+// ─── Chargement page ───────────────────────
+document.addEventListener('DOMContentLoaded', () => loadFileDetails());
 
-            if (data.error) {
-                alert('Fichier non trouvé');
-                window.location.href = '/dashboard';
-                return;
-            }
-
-            displayFileInfo(data.file_info);
-            displaySummary(data.summary);
-            displayTreatments(data.treatments);
-
-        } catch (error) {
-            console.error('Erreur chargement:', error);
-            alert('Erreur lors du chargement des détails');
-        }
+async function loadFileDetails() {
+    try {
+        const response = await fetch(`/api/file/${fileId}`);
+        const data = await response.json();
+        if (data.error) { alert('Fichier non trouvé'); window.location.href = '/dashboard'; return; }
+        displayFileInfo(data.file_info);
+        displaySummary(data.summary);
+        displayTreatments(data.treatments);
+    } catch (e) {
+        console.error('Erreur chargement:', e);
     }
+}
 
-    function displayFileInfo(info) {
-        document.getElementById('fileName').textContent = info.original_filename;
-        document.getElementById('uploadDate').textContent = new Date(info.upload_date).toLocaleString('fr-FR');
-        document.getElementById('initialRows').textContent = info.initial_rows.toLocaleString();
-        document.getElementById('finalRows').textContent = info.final_rows.toLocaleString();
-        document.getElementById('initialCols').textContent = info.initial_columns;
-        document.getElementById('finalCols').textContent = info.final_columns;
-        document.getElementById('fileSize').textContent = formatBytes(info.file_size);
+function displayFileInfo(info) {
+    document.getElementById('fileName').textContent = info.original_filename;
+    document.getElementById('uploadDate').textContent = new Date(info.upload_date).toLocaleString('fr-FR');
+    document.getElementById('initialRows').textContent = info.initial_rows.toLocaleString();
+    document.getElementById('finalRows').textContent = info.final_rows.toLocaleString();
+    document.getElementById('initialCols').textContent = info.initial_columns;
+    document.getElementById('finalCols').textContent = info.final_columns;
+    document.getElementById('fileSize').textContent = formatBytes(info.file_size);
 
-        // Badge structure de données
-        const colsAdded = (info.final_columns || 0) - (info.initial_columns || 0);
-        const structBadge = document.getElementById('structBadge');
-        if (colsAdded > 0) {
-            structBadge.innerHTML = `<span class="struct-badge struct-semistructured"><i class="fas fa-code-branch"></i> Semi-structuré → Structuré</span>`;
+    const colsAdded = (info.final_columns || 0) - (info.initial_columns || 0);
+    const structBadge = document.getElementById('structBadge');
+    structBadge.innerHTML = colsAdded > 0
+        ? `<span class="struct-badge struct-semistructured"><i class="fas fa-code-branch"></i> Semi-structuré → Structuré</span>`
+        : `<span class="struct-badge struct-structured"><i class="fas fa-table"></i> Structuré</span>`;
+
+    if (info.output_filename) {
+        // Bouton aperçu
+        const previewBtn = document.getElementById('previewBtn');
+        previewBtn.style.display = 'inline-flex';
+        previewData.filename = info.original_filename;
+
+        // Dropdown téléchargement
+        const dropdown = document.getElementById('downloadDropdown');
+        dropdown.style.display = 'inline-block';
+        dropdown.querySelectorAll('.dropdown-item').forEach(item => {
+            item.addEventListener('click', e => {
+                e.preventDefault();
+                downloadFile(fileId, item.getAttribute('data-format'));
+            });
+        });
+        const toggleBtn = dropdown.querySelector('.dropdown-toggle');
+        const menu = dropdown.querySelector('.dropdown-menu');
+        toggleBtn.addEventListener('click', e => { e.stopPropagation(); menu.classList.toggle('show'); });
+        document.addEventListener('click', () => menu.classList.remove('show'));
+    }
+}
+
+// ─── APERÇU : ouverture ────────────────────
+async function openPreview() {
+    const overlay = document.getElementById('previewOverlay');
+    overlay.classList.add('open');
+    document.body.style.overflow = 'hidden';
+
+    document.getElementById('previewFileName').textContent = previewData.filename;
+
+    // Si déjà chargé
+    if (previewData.columns.length > 0) { renderTable(); return; }
+
+    // Télécharger le CSV pour l'aperçu
+    showLoadingSkeleton();
+    try {
+        const res = await fetch(`/api/file/${fileId}/download?format=csv`);
+        const data = await res.json();
+        const csvRes = await fetch(`/download/${data.filename}`);
+        const csvText = await csvRes.text();
+        parseCSV(csvText);
+        buildColFilter();
+        renderSchema();
+        applyFilters();
+    } catch (e) {
+        console.error('Erreur chargement preview:', e);
+        document.getElementById('previewTbody').innerHTML =
+            `<tr><td colspan="20" style="text-align:center;padding:2rem;color:var(--danger);">
+                <i class="fas fa-exclamation-triangle"></i> Erreur lors du chargement
+            </td></tr>`;
+    }
+}
+
+function closePreview() {
+    document.getElementById('previewOverlay').classList.remove('open');
+    document.body.style.overflow = '';
+}
+
+function handleOverlayClick(e) {
+    if (e.target === document.getElementById('previewOverlay')) closePreview();
+}
+
+// ESC pour fermer
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closePreview(); });
+
+// ─── Parse CSV ─────────────────────────────
+function parseCSV(text) {
+    const lines = text.trim().split('\n');
+    if (lines.length < 1) return;
+
+    // Headers
+    previewData.columns = parseCSVLine(lines[0]);
+
+    // Rows
+    previewData.rows = [];
+    for (let i = 1; i < lines.length; i++) {
+        if (!lines[i].trim()) continue;
+        const vals = parseCSVLine(lines[i]);
+        const row = {};
+        previewData.columns.forEach((col, j) => {
+            row[col] = vals[j] !== undefined ? vals[j] : '';
+        });
+        previewData.rows.push(row);
+    }
+}
+
+function parseCSVLine(line) {
+    const result = [];
+    let cur = '', inQuote = false;
+    for (let i = 0; i < line.length; i++) {
+        const c = line[i];
+        if (c === '"') {
+            if (inQuote && line[i+1] === '"') { cur += '"'; i++; }
+            else inQuote = !inQuote;
+        } else if (c === ',' && !inQuote) {
+            result.push(cur.trim());
+            cur = '';
         } else {
-            structBadge.innerHTML = `<span class="struct-badge struct-structured"><i class="fas fa-table"></i> Structuré</span>`;
-        }
-
-        // ✅ NOUVEAU : Menu déroulant de téléchargement
-        if (info.output_filename) {
-            const dropdown = document.getElementById('downloadDropdown');
-            dropdown.style.display = 'inline-block';
-
-            // Ajouter les événements de clic sur chaque format
-            const items = dropdown.querySelectorAll('.dropdown-item');
-            items.forEach(item => {
-                item.addEventListener('click', function(e) {
-                    e.preventDefault();
-                    const format = this.getAttribute('data-format');
-                    downloadFile(fileId, format);
-                });
-            });
-
-            // Toggle du menu
-            const toggleBtn = dropdown.querySelector('.dropdown-toggle');
-            const menu = dropdown.querySelector('.dropdown-menu');
-
-            toggleBtn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                menu.classList.toggle('show');
-            });
-
-            // Fermer le menu si on clique ailleurs
-            document.addEventListener('click', function() {
-                menu.classList.remove('show');
-            });
+            cur += c;
         }
     }
+    result.push(cur.trim());
+    return result;
+}
 
-// ✅ NOUVELLE FONCTION : Télécharger dans le format choisi
-    async function downloadFile(fileId, format) {
-        try {
-            // Afficher un loader
-            const btn = document.querySelector('.btn-download');
-            const originalText = btn.innerHTML;
-            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération...';
-            btn.disabled = true;
+// ─── Skeleton loading ──────────────────────
+function showLoadingSkeleton() {
+    const thead = document.getElementById('previewThead');
+    const tbody = document.getElementById('previewTbody');
+    thead.innerHTML = '<tr>' + Array(6).fill('<th><div class="skeleton" style="height:12px;width:80px;"></div></th>').join('') + '</tr>';
+    tbody.innerHTML = Array(10).fill(
+        '<tr>' + Array(6).fill('<td><div class="skeleton" style="height:12px;width:100px;"></div></td>').join('') + '</tr>'
+    ).join('');
+}
 
-            // Appeler l'API pour générer le fichier dans le format demandé
-            const response = await fetch(`/api/file/${fileId}/download?format=${format}`);
+// ─── Filtres & recherche ───────────────────
+function buildColFilter() {
+    const sel = document.getElementById('colFilter');
+    sel.innerHTML = '<option value="">Toutes les colonnes</option>';
+    previewData.columns.forEach(col => {
+        const opt = document.createElement('option');
+        opt.value = col; opt.textContent = col;
+        sel.appendChild(opt);
+    });
+}
 
-            if (!response.ok) {
-                throw new Error('Erreur lors de la génération du fichier');
-            }
+function onSearch() {
+    previewData.searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    previewData.currentPage = 1;
+    applyFilters();
+}
 
-            const data = await response.json();
+function onColFilter() {
+    previewData.colFilter = document.getElementById('colFilter').value;
+    previewData.currentPage = 1;
+    applyFilters();
+}
 
-            // Télécharger le fichier
-            window.location.href = `/download/${data.filename}`;
+function toggleNullFilter() {
+    previewData.nullFilter = !previewData.nullFilter;
+    const btn = document.getElementById('btnNullFilter');
+    btn.classList.toggle('active', previewData.nullFilter);
+    previewData.currentPage = 1;
+    applyFilters();
+}
 
-            // Restaurer le bouton
-            btn.innerHTML = originalText;
-            btn.disabled = false;
+function applyFilters() {
+    let rows = [...previewData.rows];
 
-        } catch (error) {
-            console.error('Erreur téléchargement:', error);
-            alert('Erreur lors du téléchargement. Veuillez réessayer.');
-
-            // Restaurer le bouton
-            const btn = document.querySelector('.btn-download');
-            btn.innerHTML = '<i class="fas fa-download"></i> Télécharger';
-            btn.disabled = false;
-        }
+    // Filtre recherche
+    if (previewData.searchTerm) {
+        const term = previewData.searchTerm;
+        const cols = previewData.colFilter ? [previewData.colFilter] : previewData.columns;
+        rows = rows.filter(row =>
+            cols.some(col => String(row[col] ?? '').toLowerCase().includes(term))
+        );
     }
 
-    function displaySummary(summary) {
-        document.getElementById('totalTreatments').textContent = summary.total_treatments;
-        document.getElementById('rowsRemoved').textContent = summary.rows_removed.toLocaleString();
-        document.getElementById('successRate').textContent = summary.success_rate.toFixed(1) + '%';
+    // Filtre NaN
+    if (previewData.nullFilter) {
+        rows = rows.filter(row =>
+            previewData.columns.some(col => isNull(row[col]))
+        );
     }
 
-    function displayTreatments(treatments) {
-        const container = document.getElementById('treatmentsList');
-        container.innerHTML = '';
-
-        if (treatments.length === 0) {
-            container.innerHTML = '<p class="text-muted">Aucun traitement appliqué</p>';
-            return;
-        }
-
-        treatments.forEach((treatment, index) => {
-            const card = document.createElement('div');
-            card.className = `treatment-card ${treatment.success ? 'treatment-success' : 'treatment-warning'}`;
-
-            const statsHtml = renderTreatmentStats(treatment.treatment_type, treatment.stats);
-
-            card.innerHTML = `
-                <div class="treatment-header">
-                    <h4>
-                        <i class="fas fa-${getTreatmentIcon(treatment.treatment_type)}" style="color:var(--primary);"></i>
-                        ${treatment.treatment_type}
-                    </h4>
-                    <span class="badge bg-${treatment.success ? 'success' : 'danger'}">
-                        ${treatment.success ? '✓ Succès' : '✗ Échec'}
-                    </span>
-                </div>
-                <div class="treatment-body">
-                    ${statsHtml}
-                </div>
-            `;
-
-            container.appendChild(card);
+    // Tri
+    if (previewData.sortCol) {
+        rows.sort((a, b) => {
+            const av = a[previewData.sortCol] ?? '';
+            const bv = b[previewData.sortCol] ?? '';
+            const an = parseFloat(av), bn = parseFloat(bv);
+            const cmp = (!isNaN(an) && !isNaN(bn)) ? an - bn : String(av).localeCompare(String(bv));
+            return previewData.sortAsc ? cmp : -cmp;
         });
     }
 
-    function getTreatmentIcon(type) {
-        const icons = {
-            'Valeurs manquantes': 'fill-drip',
-            'Valeurs aberrantes': 'exclamation-triangle',
-            'Doublons': 'clone',
-            'Normalisation': 'chart-line'
-        };
-        return icons[type] || 'cog';
+    previewData.filtered = rows;
+    document.getElementById('visibleCount').textContent = rows.length.toLocaleString();
+    renderTable();
+    renderPagination();
+}
+
+function sortBy(col) {
+    if (previewData.sortCol === col) previewData.sortAsc = !previewData.sortAsc;
+    else { previewData.sortCol = col; previewData.sortAsc = true; }
+    previewData.currentPage = 1;
+    applyFilters();
+}
+
+// ─── Rendu tableau ─────────────────────────
+function renderTable() {
+    const thead = document.getElementById('previewThead');
+    const tbody = document.getElementById('previewTbody');
+    const noRes = document.getElementById('noResults');
+    const table = document.getElementById('previewTable');
+
+    const cols = previewData.colFilter ? ['#', previewData.colFilter] : ['#', ...previewData.columns];
+    const displayCols = cols.slice(1); // sans le #
+
+    // Header
+    thead.innerHTML = '<tr>' + cols.map(col => {
+        if (col === '#') return '<th>#</th>';
+        const isSorted = previewData.sortCol === col;
+        const icon = isSorted ? (previewData.sortAsc ? '↑' : '↓') : '↕';
+        return `<th class="${isSorted ? 'sorted' : ''}" onclick="sortBy('${col}')">
+            ${col}<span class="sort-icon">${icon}</span>
+        </th>`;
+    }).join('') + '</tr>';
+
+    const start = (previewData.currentPage - 1) * previewData.pageSize;
+    const pageRows = previewData.filtered.slice(start, start + previewData.pageSize);
+
+    if (pageRows.length === 0) {
+        table.style.display = 'none';
+        noRes.style.display = 'block';
+        return;
+    }
+    table.style.display = '';
+    noRes.style.display = 'none';
+
+    const globalStart = (previewData.currentPage - 1) * previewData.pageSize;
+    tbody.innerHTML = pageRows.map((row, i) => {
+        const rowIdx = previewData.rows.indexOf(row);
+        const hasNull = displayCols.some(col => isNull(row[col]));
+        return `<tr class="${hasNull ? 'highlighted' : ''}">
+            <td>${(globalStart + i + 1).toLocaleString()}</td>
+            ${displayCols.map(col => {
+                const val = row[col];
+                if (isNull(val)) return `<td><span class="cell-null">null</span></td>`;
+                const num = parseFloat(val);
+                const cls = !isNaN(num) && val !== '' ? 'cell-number' : 'cell-string';
+                return `<td class="${cls}" title="${escapeHtml(String(val))}">${escapeHtml(String(val))}</td>`;
+            }).join('')}
+        </tr>`;
+    }).join('');
+}
+
+// ─── Pagination ────────────────────────────
+function renderPagination() {
+    const total = previewData.filtered.length;
+    const pages = Math.ceil(total / previewData.pageSize);
+    const cur = previewData.currentPage;
+    const pag = document.getElementById('pagination');
+    const info = document.getElementById('pageInfo');
+
+    const start = (cur - 1) * previewData.pageSize + 1;
+    const end = Math.min(cur * previewData.pageSize, total);
+    info.textContent = total > 0 ? `${start.toLocaleString()} – ${end.toLocaleString()} sur ${total.toLocaleString()}` : '';
+
+    if (pages <= 1) { pag.innerHTML = ''; return; }
+
+    let html = `<button class="page-btn" onclick="goPage(${cur-1})" ${cur===1?'disabled':''}><i class="fas fa-chevron-left"></i></button>`;
+
+    // Pages à afficher
+    let pagesToShow = [];
+    if (pages <= 7) {
+        pagesToShow = Array.from({length: pages}, (_,i) => i+1);
+    } else {
+        pagesToShow = [1];
+        if (cur > 3) pagesToShow.push('...');
+        for (let p = Math.max(2, cur-1); p <= Math.min(pages-1, cur+1); p++) pagesToShow.push(p);
+        if (cur < pages-2) pagesToShow.push('...');
+        pagesToShow.push(pages);
     }
 
-    function renderTreatmentStats(type, stats) {
-        if (!stats || Object.keys(stats).length === 0) {
-            return '<p class="text-muted">Aucune statistique disponible</p>';
+    pagesToShow.forEach(p => {
+        if (p === '...') html += `<span style="padding:0 0.25rem;color:var(--text-muted);font-size:0.8rem;">…</span>`;
+        else html += `<button class="page-btn ${p===cur?'active':''}" onclick="goPage(${p})">${p}</button>`;
+    });
+
+    html += `<button class="page-btn" onclick="goPage(${cur+1})" ${cur===pages?'disabled':''}><i class="fas fa-chevron-right"></i></button>`;
+    pag.innerHTML = html;
+}
+
+function goPage(p) {
+    const pages = Math.ceil(previewData.filtered.length / previewData.pageSize);
+    if (p < 1 || p > pages) return;
+    previewData.currentPage = p;
+    renderTable();
+    renderPagination();
+    document.getElementById('viewData').scrollTop = 0;
+}
+
+// ─── Schéma colonnes ───────────────────────
+function renderSchema() {
+    const container = document.getElementById('viewSchema');
+    container.innerHTML = '';
+
+    previewData.columns.forEach(col => {
+        const vals = previewData.rows.map(r => r[col]);
+        const nonNull = vals.filter(v => !isNull(v));
+        const nullCount = vals.length - nonNull.length;
+        const nums = nonNull.map(v => parseFloat(v)).filter(v => !isNaN(v));
+        const isNumeric = nums.length === nonNull.length && nonNull.length > 0;
+
+        // Détecter dtype
+        let dtype = 'str', dtypeClass = 'dtype-str';
+        if (isNumeric) {
+            const hasDecimal = nonNull.some(v => String(v).includes('.'));
+            dtype = hasDecimal ? 'float' : 'int';
+            dtypeClass = hasDecimal ? 'dtype-float' : 'dtype-int';
         }
 
-        let html = '<div class="stats-visual">';
-
-        // ═══ VALEURS MANQUANTES ═══
-        if (type === 'Valeurs manquantes') {
-            html += '<h5><i class="fas fa-info-circle"></i> Résultat</h5>';
-
-            if (stats.missing_count === 0) {
-                html += `
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i>
-                        <strong>Aucune valeur manquante détectée</strong>
-                        <br>Votre fichier est complet avec ${stats.initial_rows.toLocaleString()} lignes.
-                    </div>
-                `;
-            } else {
-                html += `
-                    <div class="stat-item">
-                        <span class="stat-label">Action effectuée</span>
-                        <span class="stat-value">${stats.action}</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Valeurs manquantes trouvées</span>
-                        <span class="stat-value text-warning">${stats.missing_count} (${stats.pourcentage}%)</span>
-                    </div>
-                `;
-
-                if (stats.imputation_details && stats.imputation_details.length > 0) {
-                    html += '<h6 class="mt-3">Détails par colonne :</h6>';
-                    stats.imputation_details.forEach(detail => {
-                        html += `
-                            <div class="stat-item">
-                                <span class="stat-label">
-                                    <i class="fas fa-columns"></i> ${detail.column}
-                                </span>
-                                <span class="badge bg-info">${detail.methode}</span>
-                            </div>
-                        `;
-                    });
-                }
-            }
+        // Stats
+        let statsHtml = '';
+        if (isNumeric && nums.length > 0) {
+            const mn = Math.min(...nums), mx = Math.max(...nums);
+            const avg = nums.reduce((a,b)=>a+b,0)/nums.length;
+            statsHtml = `
+                <div class="schema-stats">
+                    <div class="schema-stat">Min <strong>${mn.toLocaleString('fr-FR', {maximumFractionDigits:2})}</strong></div>
+                    <div class="schema-stat">Max <strong>${mx.toLocaleString('fr-FR', {maximumFractionDigits:2})}</strong></div>
+                    <div class="schema-stat">Moy <strong>${avg.toLocaleString('fr-FR', {maximumFractionDigits:2})}</strong></div>
+                    <div class="schema-stat">Nuls <strong style="color:${nullCount>0?'var(--danger)':'var(--success)'};">${nullCount}</strong></div>
+                </div>`;
+        } else {
+            const uniq = [...new Set(nonNull)];
+            statsHtml = `
+                <div class="schema-stats">
+                    <div class="schema-stat">Valeurs uniques <strong>${uniq.length}</strong></div>
+                    <div class="schema-stat">Nuls <strong style="color:${nullCount>0?'var(--danger)':'var(--success)'};">${nullCount}</strong></div>
+                </div>`;
         }
 
-        // ═══ VALEURS ABERRANTES ═══
-        else if (type === 'Valeurs aberrantes') {
-            html += '<h5><i class="fas fa-chart-bar"></i> Résumé</h5>';
-            html += `
-                <div class="stat-item">
-                    <span class="stat-label">Lignes initiales</span>
-                    <span class="stat-value">${stats.initial_count.toLocaleString()}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Lignes finales</span>
-                    <span class="stat-value text-success">${stats.final_count.toLocaleString()}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Lignes supprimées</span>
-                    <span class="stat-value text-danger">${stats.rows_removed}</span>
-                </div>
-            `;
+        // Échantillon
+        const sample = [...new Set(nonNull)].slice(0, 5);
+        const sampleHtml = `<div class="schema-sample">
+            <div>Exemples :</div>
+            <div class="schema-sample-vals">
+                ${sample.map(v => `<span class="sample-chip">${escapeHtml(String(v))}</span>`).join('')}
+            </div>
+        </div>`;
 
-            if (stats.outliers_details && stats.outliers_details.length > 0) {
+        const card = document.createElement('div');
+        card.className = 'schema-col-card';
+        card.innerHTML = `
+            <div class="schema-col-name">
+                <i class="fas fa-${isNumeric?'hashtag':'font'}" style="color:var(--text-muted);font-size:0.75rem;"></i>
+                ${escapeHtml(col)}
+                <span class="schema-dtype ${dtypeClass}">${dtype}</span>
+            </div>
+            ${statsHtml}
+            ${sampleHtml}
+        `;
+        container.appendChild(card);
+    });
+}
+
+// ─── Tabs ──────────────────────────────────
+function switchTab(tab) {
+    document.getElementById('tabData').classList.toggle('active', tab === 'data');
+    document.getElementById('tabSchema').classList.toggle('active', tab === 'schema');
+    document.getElementById('viewData').style.display = tab === 'data' ? '' : 'none';
+    document.getElementById('viewSchema').style.display = tab === 'schema' ? 'grid' : 'none';
+}
+
+// ─── Export vue filtrée ────────────────────
+function exportVisibleCSV() {
+    const cols = previewData.colFilter ? [previewData.colFilter] : previewData.columns;
+    const lines = [cols.join(',')];
+    previewData.filtered.forEach(row => {
+        lines.push(cols.map(col => {
+            const v = String(row[col] ?? '');
+            return v.includes(',') || v.includes('"') ? `"${v.replace(/"/g,'""')}"` : v;
+        }).join(','));
+    });
+    const blob = new Blob([lines.join('\n')], {type: 'text/csv'});
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = `apercu_${previewData.filename || 'data'}.csv`;
+    a.click();
+}
+
+// ─── Helpers ───────────────────────────────
+function isNull(v) {
+    return v === null || v === undefined || v === '' || String(v).toLowerCase() === 'nan' || String(v).toLowerCase() === 'none';
+}
+function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+// ─── Téléchargement ────────────────────────
+async function downloadFile(fileId, format) {
+    try {
+        const btn = document.querySelector('.btn-download');
+        const orig = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Génération...';
+        btn.disabled = true;
+        const res = await fetch(`/api/file/${fileId}/download?format=${format}`);
+        if (!res.ok) throw new Error();
+        const data = await res.json();
+        window.location.href = `/download/${data.filename}`;
+        btn.innerHTML = orig;
+        btn.disabled = false;
+    } catch {
+        alert('Erreur lors du téléchargement.');
+        const btn = document.querySelector('.btn-download');
+        btn.innerHTML = '<i class="fas fa-download"></i> Télécharger';
+        btn.disabled = false;
+    }
+}
+
+// ─── Traitements (inchangé) ────────────────
+function displaySummary(summary) {
+    document.getElementById('totalTreatments').textContent = summary.total_treatments;
+    document.getElementById('rowsRemoved').textContent = summary.rows_removed.toLocaleString();
+    document.getElementById('successRate').textContent = summary.success_rate.toFixed(1) + '%';
+}
+
+function displayTreatments(treatments) {
+    const container = document.getElementById('treatmentsList');
+    container.innerHTML = '';
+    if (treatments.length === 0) { container.innerHTML = '<p class="text-muted">Aucun traitement appliqué</p>'; return; }
+    treatments.forEach(treatment => {
+        const card = document.createElement('div');
+        card.className = `treatment-card ${treatment.success ? 'treatment-success' : 'treatment-warning'}`;
+        card.innerHTML = `
+            <div class="treatment-header">
+                <h4><i class="fas fa-${getTreatmentIcon(treatment.treatment_type)}" style="color:var(--primary);"></i> ${treatment.treatment_type}</h4>
+                <span class="badge bg-${treatment.success ? 'success' : 'danger'}">${treatment.success ? '✓ Succès' : '✗ Échec'}</span>
+            </div>
+            <div class="treatment-body">${renderTreatmentStats(treatment.treatment_type, treatment.stats)}</div>
+        `;
+        container.appendChild(card);
+    });
+}
+
+function getTreatmentIcon(type) {
+    return {'Valeurs manquantes':'fill-drip','Valeurs aberrantes':'exclamation-triangle','Doublons':'clone','Normalisation':'chart-line'}[type] || 'cog';
+}
+
+function renderTreatmentStats(type, stats) {
+    if (!stats || Object.keys(stats).length === 0) return '<p class="text-muted">Aucune statistique disponible</p>';
+    let html = '<div class="stats-visual">';
+
+    if (type === 'Valeurs manquantes') {
+        html += '<h5><i class="fas fa-info-circle"></i> Résultat</h5>';
+        if (stats.missing_count === 0) {
+            html += `<div class="alert alert-success"><i class="fas fa-check-circle"></i> <strong>Aucune valeur manquante détectée</strong><br>Votre fichier est complet avec ${stats.initial_rows.toLocaleString()} lignes.</div>`;
+        } else {
+            html += `<div class="stat-item"><span class="stat-label">Action effectuée</span><span class="stat-value">${stats.action}</span></div>
+                     <div class="stat-item"><span class="stat-label">Valeurs manquantes trouvées</span><span class="stat-value text-warning">${stats.missing_count} (${stats.pourcentage}%)</span></div>`;
+            if (stats.imputation_details?.length > 0) {
                 html += '<h6 class="mt-3">Détails par colonne :</h6>';
-                stats.outliers_details.forEach(detail => {
-                    const hasOutliers = detail.n_outliers > 0;
-                    html += `
-                        <div class="card mb-2">
-                            <div class="card-body">
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <h6 class="mb-0"><i class="fas fa-columns"></i> ${detail.column}</h6>
-                                    <span class="badge bg-${hasOutliers ? 'warning' : 'success'}">
-                                        ${hasOutliers ? detail.n_outliers + ' outliers' : 'Aucun outlier'}
-                                    </span>
-                                </div>
-                                ${hasOutliers ? `
-                                    <div class="mt-2">
-                                        <small class="text-muted">
-                                            Action : <strong>${detail.action}</strong>
-                                            ${detail.outlier_values ? `<br>Exemples : ${detail.outlier_values.slice(0, 3).join(', ')}` : ''}
-                                        </small>
-                                    </div>
-                                ` : ''}
-                            </div>
-                        </div>
-                    `;
+                stats.imputation_details.forEach(d => {
+                    html += `<div class="stat-item"><span class="stat-label"><i class="fas fa-columns"></i> ${d.column}</span><span class="badge bg-info">${d.methode}</span></div>`;
                 });
             }
         }
-
-        // ═══ DOUBLONS ═══
-        else if (type === 'Doublons') {
-            if (stats.df_removed === 0) {
-                html += `
-                    <div class="alert alert-success">
-                        <i class="fas fa-check-circle"></i>
-                        <strong>Aucun doublon détecté</strong>
-                        <br>Toutes vos ${stats.initial_rows.toLocaleString()} lignes sont uniques.
+    } else if (type === 'Valeurs aberrantes') {
+        html += `<h5><i class="fas fa-chart-bar"></i> Résumé</h5>
+            <div class="stat-item"><span class="stat-label">Lignes initiales</span><span class="stat-value">${stats.initial_count.toLocaleString()}</span></div>
+            <div class="stat-item"><span class="stat-label">Lignes finales</span><span class="stat-value text-success">${stats.final_count.toLocaleString()}</span></div>
+            <div class="stat-item"><span class="stat-label">Lignes supprimées</span><span class="stat-value text-danger">${stats.rows_removed}</span></div>`;
+        if (stats.outliers_details?.length > 0) {
+            html += '<h6 class="mt-3">Détails par colonne :</h6>';
+            stats.outliers_details.forEach(d => {
+                html += `<div class="card mb-2"><div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <h6 class="mb-0"><i class="fas fa-columns"></i> ${d.column}</h6>
+                        <span class="badge bg-${d.n_outliers>0?'warning':'success'}">${d.n_outliers>0?d.n_outliers+' outliers':'Aucun outlier'}</span>
                     </div>
-                `;
-            } else {
-                html += `
-                    <div class="stat-item">
-                        <span class="stat-label">Doublons supprimés</span>
-                        <span class="stat-value text-danger">${stats.df_removed} (${stats.pourcentage}%)</span>
-                    </div>
-                    <div class="stat-item">
-                        <span class="stat-label">Lignes conservées</span>
-                        <span class="stat-value text-success">${stats.final_rows.toLocaleString()}</span>
-                    </div>
-                `;
-            }
+                    ${d.n_outliers>0?`<div class="mt-2"><small class="text-muted">Action : <strong>${d.action}</strong>${d.outlier_values?'<br>Exemples : '+d.outlier_values.slice(0,3).join(', '):''}</small></div>`:''}
+                </div></div>`;
+            });
         }
-
-        // ═══ NORMALISATION ═══
-        else if (type === 'Normalisation') {
-            html += `
-                <div class="alert alert-info mb-3">
-                    <i class="fas fa-info-circle"></i>
-                    <strong>${stats.description}</strong>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Colonnes normalisées</span>
-                    <span class="stat-value text-success">${stats.n_normalized}</span>
-                </div>
-                <div class="stat-item">
-                    <span class="stat-label">Colonnes exclues</span>
-                    <span class="stat-value text-muted">${stats.n_excluded}</span>
-                </div>
-            `;
-
-            if (stats.normalized_columns && stats.normalized_columns.length > 0) {
-                html += '<h6><i class="fas fa-check"></i> Colonnes normalisées :</h6><div class="column-list">';
-                stats.normalized_columns.forEach(col => {
-                    html += `<span class="column-badge">${col}</span>`;
-                });
-                html += '</div>';
-            }
-
-            if (stats.excluded_columns && stats.excluded_columns.length > 0) {
-                html += '<h6 class="mt-3"><i class="fas fa-ban"></i> Colonnes exclues (ID) :</h6><div class="column-list">';
-                stats.excluded_columns.forEach(col => {
-                    html += `<span class="column-badge" style="background:#fee2e2;color:#991b1b;">${col}</span>`;
-                });
-                html += '</div>';
-            }
-
-            if (stats.stats_before && stats.stats_after) {
-                html += '<h6 class="mt-4"><i class="fas fa-exchange-alt"></i> Transformation des données :</h6>';
-                html += '<table class="comparison-table table table-striped"><thead><tr><th>Colonne</th><th>Avant</th><th></th><th>Après</th></tr></thead><tbody>';
-                Object.keys(stats.stats_before).forEach(col => {
-                    const before = stats.stats_before[col];
-                    const after  = stats.stats_after[col];
-                    html += `
-                        <tr>
-                            <td><strong>${col}</strong></td>
-                            <td><small>Min: ${before.min.toFixed(2)}<br>Max: ${before.max.toFixed(2)}<br>Moyenne: ${before.mean.toFixed(2)}</small></td>
-                            <td class="text-center"><i class="fas fa-arrow-right text-primary"></i></td>
-                            <td><small>Min: ${after.min.toFixed(2)}<br>Max: ${after.max.toFixed(2)}<br>Moyenne: ${after.mean.toFixed(2)}</small></td>
-                        </tr>
-                    `;
-                });
-                html += '</tbody></table>';
-            }
+    } else if (type === 'Doublons') {
+        if (stats.df_removed === 0) {
+            html += `<div class="alert alert-success"><i class="fas fa-check-circle"></i> <strong>Aucun doublon détecté</strong><br>Toutes vos ${stats.initial_rows.toLocaleString()} lignes sont uniques.</div>`;
+        } else {
+            html += `<div class="stat-item"><span class="stat-label">Doublons supprimés</span><span class="stat-value text-danger">${stats.df_removed} (${stats.pourcentage}%)</span></div>
+                     <div class="stat-item"><span class="stat-label">Lignes conservées</span><span class="stat-value text-success">${stats.final_rows.toLocaleString()}</span></div>`;
         }
-
-        html += '</div>';
-        return html;
+    } else if (type === 'Normalisation') {
+        html += `<div class="alert alert-info mb-3"><i class="fas fa-info-circle"></i> <strong>${stats.description}</strong></div>
+            <div class="stat-item"><span class="stat-label">Colonnes normalisées</span><span class="stat-value text-success">${stats.n_normalized}</span></div>
+            <div class="stat-item"><span class="stat-label">Colonnes exclues</span><span class="stat-value text-muted">${stats.n_excluded}</span></div>`;
+        if (stats.normalized_columns?.length > 0) {
+            html += '<h6><i class="fas fa-check"></i> Colonnes normalisées :</h6><div class="column-list">';
+            stats.normalized_columns.forEach(col => { html += `<span class="column-badge">${col}</span>`; });
+            html += '</div>';
+        }
+        if (stats.stats_before && stats.stats_after) {
+            html += '<h6 class="mt-4"><i class="fas fa-exchange-alt"></i> Transformation :</h6><table class="comparison-table table table-striped"><thead><tr><th>Colonne</th><th>Avant</th><th></th><th>Après</th></tr></thead><tbody>';
+            Object.keys(stats.stats_before).forEach(col => {
+                const b = stats.stats_before[col], a = stats.stats_after[col];
+                html += `<tr><td><strong>${col}</strong></td>
+                    <td><small>Min: ${b.min.toFixed(2)}<br>Max: ${b.max.toFixed(2)}<br>Moy: ${b.mean.toFixed(2)}</small></td>
+                    <td class="text-center"><i class="fas fa-arrow-right text-primary"></i></td>
+                    <td><small>Min: ${a.min.toFixed(2)}<br>Max: ${a.max.toFixed(2)}<br>Moy: ${a.mean.toFixed(2)}</small></td></tr>`;
+            });
+            html += '</tbody></table>';
+        }
     }
+    html += '</div>';
+    return html;
+}
 
-    function formatBytes(bytes) {
-        if (bytes === 0) return '0 Bytes';
-        const k = 1024;
-        const sizes = ['Bytes', 'KB', 'MB', 'GB'];
-        const i = Math.floor(Math.log(bytes) / Math.log(k));
-        return Math.round(bytes / Math.pow(k, i) * 100) / 100 + ' ' + sizes[i];
-    }
+function formatBytes(bytes) {
+    if (!bytes) return '0 B';
+    const k = 1024, sizes = ['B','KB','MB','GB'];
+    const i = Math.floor(Math.log(bytes)/Math.log(k));
+    return Math.round(bytes/Math.pow(k,i)*100)/100 + ' ' + sizes[i];
+}
 </script>
-
 {% endblock %}
