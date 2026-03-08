@@ -38,8 +38,8 @@ def save_to_db(action,data):
             query = """
                     INSERT INTO files
                     (original_filename, saved_filename, file_extension, file_size,
-                     initial_rows, initial_columns, processing_status)
-                    VALUES (%s, %s, %s, %s, %s, %s, %s) \
+                     initial_rows, initial_columns, processing_status, user_id)
+                    VALUES (%s, %s, %s, %s, %s, %s, %s, %s) \
                     """
             values = (
                 data.get('original_filename'),
@@ -48,7 +48,8 @@ def save_to_db(action,data):
                 data.get('file_size'),
                 data.get('initial_rows'),
                 data.get('initial_columns'),
-                data.get('status', 'processing')
+                data.get('status', 'processing'),
+                data.get('user_id')
             )
             cursor.execute(query, values)
             conn.commit()
@@ -115,7 +116,7 @@ def save_to_db(action,data):
             conn.close()
 
 #recuperation historique file
-def get_history(limit=10):
+def get_history(limit=10, user_id=None, is_admin=False):
     #Récupère l'historique des fichiers traités et recupere la Liste des fichiers avec leurs infos
     conn = get_db_connection()
     if not conn:
@@ -124,13 +125,14 @@ def get_history(limit=10):
     try:
         cursor = conn.cursor(dictionary=True)
 
-        query = """
+        base_query = """
                 SELECT f.id, \
                        f.original_filename, \
                        f.upload_date, \
                        f.initial_rows, \
                        f.final_rows, \
                        f.processing_status, \
+                       f.user_id, \
                        COUNT(pl.id) as treatments_count
                 FROM files f
                          LEFT JOIN processing_logs pl ON f.id = pl.file_id
@@ -139,7 +141,14 @@ def get_history(limit=10):
                     LIMIT %s \
                 """
 
-        cursor.execute(query, (limit,))
+        if is_admin:
+            # Admin voit tout
+            query = base_query + " GROUP BY f.id ORDER BY f.upload_date DESC LIMIT %s"
+            cursor.execute(query, (limit,))
+        else:
+            # Utilisateur voit seulement ses fichiers
+            query = base_query + " WHERE f.user_id = %s GROUP BY f.id ORDER BY f.upload_date DESC LIMIT %s"
+            cursor.execute(query, (user_id, limit))
         return cursor.fetchall()
 
     except Error as e:
@@ -160,6 +169,41 @@ def init_db():
     try:
         cursor = conn.cursor()
 
+        # ── Table users ──────────────────────────────
+        cursor.execute("""
+                       CREATE TABLE IF NOT EXISTS users
+                       (
+                           id
+                           INT
+                           AUTO_INCREMENT
+                           PRIMARY
+                           KEY,
+                           nom
+                           VARCHAR
+                       (
+                           100
+                       ) NOT NULL,
+                           prenom VARCHAR
+                       (
+                           100
+                       ) NOT NULL,
+                           email VARCHAR
+                       (
+                           150
+                       ) UNIQUE NOT NULL,
+                           password_hash VARCHAR
+                       (
+                           255
+                       ) NOT NULL,
+                           role ENUM
+                       (
+                           'user',
+                           'admin'
+                       ) DEFAULT 'user',
+                           created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+                           )
+                       """)
+
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS files (
                 id                 INT AUTO_INCREMENT PRIMARY KEY,
@@ -174,7 +218,9 @@ def init_db():
                 output_filename    VARCHAR(255),
                 processing_status  VARCHAR(50)   DEFAULT 'processing',
                 error_message      TEXT,
-                upload_date        DATETIME      DEFAULT CURRENT_TIMESTAMP
+                user_id            INT,
+                upload_date        DATETIME      DEFAULT CURRENT_TIMESTAMP,
+                FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE SET NULL
             )
         """)
 

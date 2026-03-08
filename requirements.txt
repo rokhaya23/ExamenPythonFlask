@@ -8,5 +8,6 @@ werkzeug  # securise et normalise les fichiers
 mysql-connector-python
 xmltodict
 python-dotenv
+flask-login
 
 
