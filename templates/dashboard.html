@@ -409,7 +409,7 @@
                         ? '<span class="badge-err">Erreur</span>'
                         : '<span class="badge-pend">En cours</span>';
 
-                const delta = file.initial_rows - file.final_rows;
+                const delta = (file.initial_rows || 0) - (file.final_rows || 0);
                 const deltaHtml = delta > 0
                     ? `<span class="delta-neg">▼ ${delta}</span>`
                     : delta < 0
@@ -453,9 +453,9 @@
                     </td>
                     <td>
                         <div class="rows-info">
-                            <strong>${file.initial_rows.toLocaleString()}</strong>
+                            <strong>${(file.initial_rows || 0).toLocaleString()}</strong>
                             <span style="color:var(--text-muted)"> → </span>
-                            <strong>${file.final_rows.toLocaleString()}</strong>
+                            <strong>${(file.final_rows || 0).toLocaleString()}</strong>
                         </div>
                         ${deltaHtml}
                     </td>
