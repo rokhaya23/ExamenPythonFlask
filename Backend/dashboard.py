@@ -1,7 +1,18 @@
+import decimal
+
 from Backend.database import get_db_connection
 from mysql.connector import Error
 import json
 
+def _fix_decimals(obj):
+    """Convertit les Decimal MySQL en float pour JSON"""
+    if isinstance(obj, dict):
+        return {k: _fix_decimals(v) for k, v in obj.items()}
+    if isinstance(obj, list):
+        return [_fix_decimals(i) for i in obj]
+    if isinstance(obj, decimal.Decimal):
+        return float(obj)
+    return obj
 
 def get_file_details(file_id):
     """Récupère tous les détails d'un fichier traité."""

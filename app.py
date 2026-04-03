@@ -266,7 +266,7 @@ def api_dashboard_stats():
         stats = get_statistics(user_id=None if current_user.is_admin() else current_user.id)
         if stats:
             return jsonify(stats)
-        return jsonify({'error': 'Erreur récupération stats'}), 500
+        return jsonify({'general': {'total_files': 0, 'total_rows_final': 0, 'avg_retention_rate': 0}, 'treatments': []})
     except Exception as e:
         import traceback
         traceback.print_exc()
