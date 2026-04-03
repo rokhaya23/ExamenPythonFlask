@@ -9,5 +9,5 @@ mysql-connector-python
 xmltodict
 python-dotenv
 flask-login
-
+gunicorn
 
