@@ -262,12 +262,15 @@ def file_details(file_id):
 @app.route('/api/dashboard/stats')
 @login_required
 def api_dashboard_stats():
-    """API pour les statistiques globales"""
-    stats = get_statistics(user_id=None if current_user.is_admin() else current_user.id)
-    if stats:
-        return jsonify(stats)
-    return jsonify({'error': 'Erreur récupération stats'}), 500
-
+    try:
+        stats = get_statistics(user_id=None if current_user.is_admin() else current_user.id)
+        if stats:
+            return jsonify(stats)
+        return jsonify({'error': 'Erreur récupération stats'}), 500
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return jsonify({'error': str(e)}), 500
 @app.route('/api/dashboard/files')
 @login_required
 def api_dashboard_files():

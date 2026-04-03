@@ -22,7 +22,7 @@ def get_file_details(file_id):
         query_logs = """
             SELECT * FROM processing_logs
             WHERE file_id = %s
-            ORDER BY timestamp
+            ORDER BY id
         """
         cursor.execute(query_logs, (file_id,))
         treatments = cursor.fetchall()
